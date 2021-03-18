@@ -45,8 +45,8 @@ var catalogPullCmdShortHelp = `Pull an application from catalog.`
 
 var pullCmd = &cobra.Command{
 	Use:   "pull <[repoURL/]repoName/appName[:tag]>",
-	Long:  catalogPushCmdLongHelp,
-	Short: catalogPushCmdShortHelp,
+	Long:  catalogPullCmdLongHelp,
+	Short: catalogPullCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		catalog, err := operations.NewCatalog(&cfg)
