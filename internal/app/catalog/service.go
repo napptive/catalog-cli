@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Napptive
+ * Copyright 2021 Napptive
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/napptive/go-template/internal/pkg/config"
+	"github.com/napptive/catalog-cli/internal/pkg/config"
 
 	"github.com/rs/zerolog/log"
 )

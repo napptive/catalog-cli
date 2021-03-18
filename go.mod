@@ -1,10 +1,12 @@
-module github.com/napptive/go-template
+module github.com/napptive/catalog-cli
 
 go 1.15
 
 require (
-	github.com/onsi/ginkgo v1.14.2
-	github.com/onsi/gomega v1.10.1
+	github.com/napptive/nerrors v1.0.0
+	github.com/onsi/ginkgo v1.15.0
+	github.com/onsi/gomega v1.10.5
 	github.com/rs/zerolog v1.20.0
 	github.com/spf13/cobra v1.1.1
+	google.golang.org/grpc v1.35.0
 )
