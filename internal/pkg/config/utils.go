@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package config
 
-import (
-	"github.com/rs/zerolog/log"
-)
+import "github.com/napptive/nerrors/pkg/nerrors"
 
-// Config structure with all the options required by the service and service components.
-type Config struct {
-	ConnectionConfig
-	Version string
-	Commit  string
-	Debug   bool
-}
-
-// IsValid checks if the configuration options are valid.
-func (c *Config) IsValid() error {
-	if err := c.ConnectionConfig.IsValid(); err != nil {
-		return err
+// CheckNotEmpty returns an error if the given attribute is empty.
+func CheckNotEmpty(attribute string, attributeName string) error {
+	if attribute == "" {
+		return nerrors.NewInvalidArgumentError("%s cannot be empty", attributeName)
 	}
 	return nil
 }
 
-// Print the configuration using the application logger.
-func (c *Config) Print() {
-	// Use logger to print the configuration
-	log.Info().Str("version", c.Version).Str("commit", c.Commit).Msg("Orcha config")
-	c.ConnectionConfig.Print()
+// CheckPossitive returns an error if the given value is less or equal than zero.
+func CheckPossitive(attribute int, attributeName string) error {
+	if attribute <= 0 {
+		return nerrors.NewInvalidArgumentError("%s must be a positive number", attributeName)
+	}
+	return nil
 }
+

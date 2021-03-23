@@ -16,7 +16,14 @@
 package operations
 
 import (
+	"fmt"
 	"github.com/napptive/catalog-cli/internal/pkg/config"
+	"github.com/napptive/catalog-cli/internal/pkg/connection"
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
+	"github.com/napptive/nerrors/pkg/nerrors"
+	"github.com/rs/zerolog/log"
+	"io/ioutil"
+	"os"
 )
 
 type Catalog struct {
@@ -28,16 +35,101 @@ func NewCatalog(cfg *config.Config) (*Catalog, error) {
 		return nil, err
 	}
 	return &Catalog{
-		cfg:cfg,
+		cfg: cfg,
 	}, nil
 }
 
+// loadApp reads the application directory getting all the files and their paths
+func (c *Catalog) loadApp(path string, relativePath string) ([]string, error) {
+	dir, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	defer dir.Close()
+
+	var result []string
+	directories, err := dir.Readdirnames(0)
+	if err != nil {
+		return nil, err
+	}
+	for _, dirName := range directories {
+		newPath := fmt.Sprintf("%s/%s", path, dirName)
+		file, err := os.Stat(newPath)
+		if err != nil {
+			return nil, err
+		}
+		if file.IsDir() {
+			res, nErr := c.loadApp(newPath, fmt.Sprintf("%s/%s", relativePath, dirName))
+			if nErr != nil {
+				return nil, nErr
+			}
+			result = append(result, res...)
+
+		} else {
+			result = append(result, fmt.Sprintf("%s/%s", relativePath, dirName))
+		}
+	}
+
+	return result, nil
+}
+
 // Push adds a new application to catalog
-func (c *Catalog) Push (application string, path string) error {
+func (c *Catalog) Push(application string, path string) error {
+	log.Debug().Str("application", application).Str("path", path).Msg("Push received!")
+
+	// Read the path and compose the AddCatalogRequest
+	names, err := c.loadApp(path, ".")
+	if err != nil {
+		return err
+	}
+	log.Debug().Interface("names", names).Msg("Files found")
+
+	// Send the request
+	// Read the paths and compose the AddCatalogRequest
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		return nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d", c.cfg.ServerAddress, c.cfg.ServerPort )
+	}
+	defer conn.Close()
+
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := connection.GetContext()
+	defer cancel()
+
+	// Get response and print result
+	stream, err := client.Add(ctx)
+	if err != nil {
+		return err
+	}
+	for _, fileName := range names {
+		readPath := fmt.Sprintf("%s/%s", path, fileName)
+		data, err := ioutil.ReadFile(readPath)
+		if err != nil {
+			log.Err(err).Str("path", readPath).Msg("error reading file")
+			return nil
+		}
+		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
+			ApplicationName: application,
+			// TODO: get the content
+			File:            &grpc_catalog_go.FileInfo{
+				Path: fileName,
+				Data: data,
+			},
+		}); err != nil {
+			return err
+		}
+	}
+
+	reply, err := stream.CloseAndRecv()
+	if err != nil {
+		return err
+	}
+	log.Debug().Interface("reply", reply).Msg("Application sent")
 	return nil
 }
 
 // Pull downloads application files
-func (c *Catalog) Pull (application string) error {
+func (c *Catalog) Pull(application string) error {
 	return nil
 }
