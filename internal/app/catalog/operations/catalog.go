@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Napptive
+ * Copyright 2021 Napptive
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package commands
+package operations
 
 import (
-	"github.com/napptive/go-template/internal/app/dummy"
-	"github.com/spf13/cobra"
+	"github.com/napptive/catalog-cli/internal/pkg/config"
 )
 
-var runCmdLongHelp = "Launch the Dummy service"
-var runCmdShortHelp = "Lauch the service"
-var runCmdExample = `$ dummy run`
-var runCmdUse = "run"
-
-var runCmd = &cobra.Command{
-	Use:     runCmdUse,
-	Long:    runCmdLongHelp,
-	Example: runCmdExample,
-	Short:   runCmdShortHelp,
-	Run: func(cmd *cobra.Command, args []string) {
-		cfg.Debug = debugLevel
-		s := dummy.NewService(cfg)
-		s.Run()
-	},
+type Catalog struct {
+	cfg *config.Config
 }
 
-func init() {
-	rootCmd.AddCommand(runCmd)
+func NewCatalog(cfg *config.Config) (*Catalog, error) {
+	if err := cfg.IsValid(); err != nil {
+		return nil, err
+	}
+	return &Catalog{
+		cfg:cfg,
+	}, nil
+}
+
+// Push adds a new application to catalog
+func (c *Catalog) Push (application string, path string) error {
+	return nil
+}
+
+// Pull downloads application files
+func (c *Catalog) Pull (application string) error {
+	return nil
 }

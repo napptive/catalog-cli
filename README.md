@@ -1,5 +1,5 @@
-# go-template
-Napptive golang template
+# catalog-cli
+A CLI to interact with Napptive Catalog.
 
 The purpose of this project is to provide a common template to develop Golang microservices in Napptive.
 

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/napptive/go-template/internal/pkg/config"
+	"github.com/napptive/catalog-cli/internal/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -32,10 +32,10 @@ var cfg config.Config
 var debugLevel bool
 var consoleLogging bool
 
-var rootCmdLongHelp = "This is an example service that you should remove when you use this template."
-var rootCmdShortHelp = "Dummy command"
-var rootCmdExample = `$ dummy`
-var rootCmdUse = "dummy"
+var rootCmdLongHelp = "The catalog command provides a set of methods to interact with the Napptive Catalog"
+var rootCmdShortHelp = "Catalog command"
+var rootCmdExample = `$ catalog`
+var rootCmdUse = "catalog"
 
 var rootCmd = &cobra.Command{
 	Use:     rootCmdUse,

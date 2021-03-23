@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Napptive
+ * Copyright 2021 Napptive
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package main
+package config
 
-import (
-	"github.com/napptive/go-template/cmd/pummy/commands"
-)
+// ConnectionConfig contains the configuration elements related to the connection with the Catalog-Manager API.
+type ConnectionConfig struct {
 
-// Version of the command
-var Version string
+}
 
-// Commit from which the command was built
-var Commit string
+// IsValid checks if the configuration options are valid.
+func (cc *ConnectionConfig) IsValid() error {
 
-func main() {
-	commands.Execute(Version, Commit)
+	return nil
+}
+
+// Print the configuration using the application logger.
+func (cc *ConnectionConfig) Print() {
 }
