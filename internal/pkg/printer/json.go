@@ -13,19 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package config
+
+package printer
 
 import (
-	"github.com/onsi/ginkgo"
-	"github.com/onsi/gomega"
+	"encoding/json"
+	"fmt"
 )
 
-var _ = ginkgo.Describe("Config tests", func() {
+// JSONPrinter structure with the implementation required to print as JSON a given result.
+type JSONPrinter struct {
+}
 
-	cfg := Config{}
+// NewJSONPrinter build a new ResultPrinter whose output is the JSON representation of the object.
+func NewJSONPrinter() (ResultPrinter, error) {
+	return &JSONPrinter{}, nil
+}
 
-	ginkgo.It("Should be valid", func() {
-		gomega.Expect(cfg.IsValid()).NotTo(gomega.Succeed())
-	})
+// Print the result.
+func (jp *JSONPrinter) Print(result interface{}) error {
+	res, err := json.Marshal(result)
+	if err == nil {
+		fmt.Println(string(res))
+	}
+	return err
+}
 
-})

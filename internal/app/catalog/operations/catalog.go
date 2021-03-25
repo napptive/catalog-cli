@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"github.com/napptive/catalog-cli/internal/pkg/config"
 	"github.com/napptive/catalog-cli/internal/pkg/connection"
+	"github.com/napptive/catalog-cli/internal/pkg/printer"
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"github.com/rs/zerolog/log"
@@ -28,14 +29,20 @@ import (
 
 type Catalog struct {
 	cfg *config.Config
+	printer.ResultPrinter
 }
 
 func NewCatalog(cfg *config.Config) (*Catalog, error) {
 	if err := cfg.IsValid(); err != nil {
 		return nil, err
 	}
+	printer, err := printer.GetPrinter(cfg.PrinterType)
+	if err != nil {
+		return nil, err
+	}
 	return &Catalog{
 		cfg: cfg,
+		ResultPrinter: printer,
 	}, nil
 }
 
@@ -81,7 +88,8 @@ func (c *Catalog) Push(application string, path string) error {
 	// Read the path and compose the AddCatalogRequest
 	names, err := c.loadApp(path, ".")
 	if err != nil {
-		return err
+		PrintResultOrError(c.ResultPrinter, nil, err)
+		return nil
 	}
 	log.Debug().Interface("names", names).Msg("Files found")
 
@@ -89,7 +97,8 @@ func (c *Catalog) Push(application string, path string) error {
 	// Read the paths and compose the AddCatalogRequest
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
-		return nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d", c.cfg.ServerAddress, c.cfg.ServerPort )
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d", c.cfg.ServerAddress, c.cfg.ServerPort ))
+		return nil
 	}
 	defer conn.Close()
 
@@ -100,13 +109,14 @@ func (c *Catalog) Push(application string, path string) error {
 	// Get response and print result
 	stream, err := client.Add(ctx)
 	if err != nil {
-		return err
+		PrintResultOrError(c.ResultPrinter, nil, err)
+		return nil
 	}
 	for _, fileName := range names {
 		readPath := fmt.Sprintf("%s/%s", path, fileName)
 		data, err := ioutil.ReadFile(readPath)
 		if err != nil {
-			log.Err(err).Str("path", readPath).Msg("error reading file")
+			PrintResultOrError(c.ResultPrinter, nil, err)
 			return nil
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
@@ -117,13 +127,17 @@ func (c *Catalog) Push(application string, path string) error {
 				Data: data,
 			},
 		}); err != nil {
-			return err
+			PrintResultOrError(c.ResultPrinter, nil, err)
+			return nil
 		}
 	}
 
 	reply, err := stream.CloseAndRecv()
 	if err != nil {
-		return err
+		PrintResultOrError(c.ResultPrinter, nil, err)
+		return nil
+	} else {
+		PrintResultOrError(c.ResultPrinter, reply, nil)
 	}
 	log.Debug().Interface("reply", reply).Msg("Application sent")
 	return nil

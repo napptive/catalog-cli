@@ -26,6 +26,9 @@ type Config struct {
 	Version string
 	Commit  string
 	Debug   bool
+
+	// PrinterType defines how results are to be shown.
+	PrinterType string
 }
 
 // IsValid checks if the configuration options are valid.
@@ -39,6 +42,8 @@ func (c *Config) IsValid() error {
 // Print the configuration using the application logger.
 func (c *Config) Print() {
 	// Use logger to print the configuration
-	log.Info().Str("version", c.Version).Str("commit", c.Commit).Msg("Orcha config")
+	log.Info().Str("version", c.Version).Str("commit", c.Commit).Msg("Build information")
+	log.Info().Bool("debug", c.Debug).Str("printer", c.PrinterType).Msg("internal configuration")
+
 	c.ConnectionConfig.Print()
 }
