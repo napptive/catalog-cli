@@ -25,8 +25,8 @@ func CheckNotEmpty(attribute string, attributeName string) error {
 	return nil
 }
 
-// CheckPossitive returns an error if the given value is less or equal than zero.
-func CheckPossitive(attribute int, attributeName string) error {
+// CheckPositive returns an error if the given value is less or equal than zero.
+func CheckPositive(attribute int, attributeName string) error {
 	if attribute <= 0 {
 		return nerrors.NewInvalidArgumentError("%s must be a positive number", attributeName)
 	}

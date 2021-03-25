@@ -32,7 +32,7 @@ func (cc *ConnectionConfig) IsValid() error {
 	if err := CheckNotEmpty(cc.ServerAddress, "ServerAddress"); err != nil {
 		return err
 	}
-	if err := CheckPossitive(cc.ServerPort, "ServerPort"); err != nil {
+	if err := CheckPositive(cc.ServerPort, "ServerPort"); err != nil {
 		return err
 	}
 
