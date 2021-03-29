@@ -20,9 +20,11 @@ import (
 	"github.com/napptive/catalog-cli/internal/pkg/config"
 	"github.com/napptive/catalog-cli/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/internal/pkg/printer"
+	grpc_catalog_common_go "github.com/napptive/grpc-catalog-common-go"
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"github.com/rs/zerolog/log"
+	"io"
 	"io/ioutil"
 	"os"
 )
@@ -41,7 +43,7 @@ func NewCatalog(cfg *config.Config) (*Catalog, error) {
 		return nil, err
 	}
 	return &Catalog{
-		cfg: cfg,
+		cfg:           cfg,
 		ResultPrinter: printer,
 	}, nil
 }
@@ -98,7 +100,7 @@ func (c *Catalog) Push(application string, path string) error {
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
-			c.cfg.CatalogAddress, c.cfg.CatalogPort ))
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
 		return nil
 	}
 	defer conn.Close()
@@ -122,7 +124,7 @@ func (c *Catalog) Push(application string, path string) error {
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
 			ApplicationName: application,
-			File:            &grpc_catalog_go.FileInfo{
+			File: &grpc_catalog_go.FileInfo{
 				Path: fileName,
 				Data: data,
 			},
@@ -143,7 +145,61 @@ func (c *Catalog) Push(application string, path string) error {
 	return nil
 }
 
+func (c *Catalog) CompressFiles (files []*grpc_catalog_go.FileInfo) error {
+	return nil
+}
+
 // Pull downloads application files
 func (c *Catalog) Pull(application string) error {
-	return nerrors.NewUnimplementedError("not implemented yet")
+
+	// Connection
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return nil
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := connection.GetContext()
+	defer cancel()
+
+	// Call Download
+	downClient, err := client.Download(ctx, &grpc_catalog_go.DownloadApplicationRequest{ApplicationName: application})
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, err)
+		return nil
+	}
+
+	// Receive data
+	var files []*grpc_catalog_go.FileInfo
+	log.Debug().Msg("start receiving")
+	for {
+		fileReceived, err := downClient.Recv()
+		if err == io.EOF {
+			log.Debug().Msg("stop receiving")
+			downClient.CloseSend()
+			break
+		}
+		if err != nil {
+			PrintResultOrError(c.ResultPrinter, nil, err)
+			return nil
+		}
+		files = append(files, fileReceived)
+	}
+
+	// Save the files in a tgz file
+	err = SaveAndCompressFiles("application", files)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, err)
+		return nil
+	}
+	PrintResultOrError(c.ResultPrinter, &grpc_catalog_common_go.OpResponse{
+		Status:     grpc_catalog_common_go.OpStatus_SUCCESS,
+		StatusName: grpc_catalog_common_go.OpStatus_SUCCESS.String(),
+		UserInfo:   "Application pulled successfully",
+	}, nil)
+	return nil
 }
