@@ -97,7 +97,8 @@ func (c *Catalog) Push(application string, path string) error {
 	// Read the paths and compose the AddCatalogRequest
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d", c.cfg.ServerAddress, c.cfg.ServerPort ))
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort ))
 		return nil
 	}
 	defer conn.Close()
@@ -144,5 +145,5 @@ func (c *Catalog) Push(application string, path string) error {
 
 // Pull downloads application files
 func (c *Catalog) Pull(application string) error {
-	return nerrors.NewUnimplemented...
+	return nerrors.NewUnimplementedError("not implemented yet")
 }

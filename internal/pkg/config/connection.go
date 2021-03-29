@@ -29,10 +29,10 @@ type ConnectionConfig struct {
 
 // IsValid checks if the configuration options are valid.
 func (cc *ConnectionConfig) IsValid() error {
-	if err := CheckNotEmpty(cc.ServerAddress, "ServerAddress"); err != nil {
+	if err := CheckNotEmpty(cc.CatalogAddress, "CatalogAddress"); err != nil {
 		return err
 	}
-	if err := CheckPositive(cc.ServerPort, "ServerPort"); err != nil {
+	if err := CheckPositive(cc.CatalogPort, "CatalogPort"); err != nil {
 		return err
 	}
 
@@ -41,5 +41,5 @@ func (cc *ConnectionConfig) IsValid() error {
 
 // Print the configuration using the application logger.
 func (cc *ConnectionConfig) Print() {
-	log.Info().Str("server", cc.ServerAddress).Int("Port", cc.ServerPort).Msg("Connection options")
+	log.Info().Str("server", cc.CatalogAddress).Int("Port", cc.CatalogPort).Msg("Connection options")
 }
