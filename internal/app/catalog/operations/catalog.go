@@ -121,7 +121,6 @@ func (c *Catalog) Push(application string, path string) error {
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
 			ApplicationName: application,
-			// TODO: get the content
 			File:            &grpc_catalog_go.FileInfo{
 				Path: fileName,
 				Data: data,
