@@ -180,7 +180,7 @@ func (c *Catalog) Pull(application string) error {
 		fileReceived, err := downClient.Recv()
 		if err == io.EOF {
 			log.Debug().Msg("stop receiving")
-			downClient.CloseSend()
+			_ = downClient.CloseSend()
 			break
 		}
 		if err != nil {
