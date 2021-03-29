@@ -21,7 +21,7 @@ import "github.com/rs/zerolog/log"
 // ConnectionConfig contains the configuration elements related to the connection with the Catalog-Manager API.
 type ConnectionConfig struct {
 	// ServerAddress with the dns/IP of the catalog-manager gRPC server.
-	ServerAddress string
+	CatalogAddress string
 	// ServerPort with the port of the catalog-manager gRPC server.
 	CatalogPort int
 
