@@ -144,5 +144,5 @@ func (c *Catalog) Push(application string, path string) error {
 
 // Pull downloads application files
 func (c *Catalog) Pull(application string) error {
-	return nil
+	return nerrors.NewUnimplemented...
 }
