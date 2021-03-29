@@ -53,6 +53,12 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVar(&debugLevel, "debug", false, "Set debug level")
 	rootCmd.PersistentFlags().BoolVar(&consoleLogging, "consoleLogging", false, "Pretty print logging")
+
+	rootCmd.PersistentFlags().StringVar( &cfg.PrinterType, "output", "table", "Output format in which the results will be returned: json or table")
+
+	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog-manager", "Catalog-manager host")
+	rootCmd.PersistentFlags().IntVar(&cfg.CatalogPort, "catalogPort", 7060, "Catalog-manager port")
+
 }
 
 // Execute the user command

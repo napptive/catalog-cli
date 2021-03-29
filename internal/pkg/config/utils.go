@@ -15,17 +15,21 @@
  */
 package config
 
-import (
-	"github.com/onsi/ginkgo"
-	"github.com/onsi/gomega"
-)
+import "github.com/napptive/nerrors/pkg/nerrors"
 
-var _ = ginkgo.Describe("Config tests", func() {
+// CheckNotEmpty returns an error if the given attribute is empty.
+func CheckNotEmpty(attribute string, attributeName string) error {
+	if attribute == "" {
+		return nerrors.NewInvalidArgumentError("%s cannot be empty", attributeName)
+	}
+	return nil
+}
 
-	cfg := Config{}
+// CheckPositive returns an error if the given value is less or equal than zero.
+func CheckPositive(attribute int, attributeName string) error {
+	if attribute <= 0 {
+		return nerrors.NewInvalidArgumentError("%s must be a positive number", attributeName)
+	}
+	return nil
+}
 
-	ginkgo.It("Should be valid", func() {
-		gomega.Expect(cfg.IsValid()).NotTo(gomega.Succeed())
-	})
-
-})

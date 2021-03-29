@@ -16,17 +16,30 @@
 
 package config
 
+import "github.com/rs/zerolog/log"
+
 // ConnectionConfig contains the configuration elements related to the connection with the Catalog-Manager API.
 type ConnectionConfig struct {
+	// ServerAddress with the dns/IP of the catalog-manager gRPC server.
+	CatalogAddress string
+	// ServerPort with the port of the catalog-manager gRPC server.
+	CatalogPort int
 
 }
 
 // IsValid checks if the configuration options are valid.
 func (cc *ConnectionConfig) IsValid() error {
+	if err := CheckNotEmpty(cc.CatalogAddress, "CatalogAddress"); err != nil {
+		return err
+	}
+	if err := CheckPositive(cc.CatalogPort, "CatalogPort"); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 // Print the configuration using the application logger.
 func (cc *ConnectionConfig) Print() {
+	log.Info().Str("server", cc.CatalogAddress).Int("Port", cc.CatalogPort).Msg("Connection options")
 }

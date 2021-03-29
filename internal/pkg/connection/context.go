@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package config
+
+package connection
 
 import (
-	"github.com/onsi/ginkgo"
-	"github.com/onsi/gomega"
+	"context"
+	"time"
 )
 
-var _ = ginkgo.Describe("Config tests", func() {
+// ContextTimeout with the default timeout for Napptive catalog operations.
+const ContextTimeout = 5 * time.Minute
 
-	cfg := Config{}
-
-	ginkgo.It("Should be valid", func() {
-		gomega.Expect(cfg.IsValid()).NotTo(gomega.Succeed())
-	})
-
-})
+// GetContext returns a valid gRPC context with the appropiate authorization header.
+func GetContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), ContextTimeout)
+}

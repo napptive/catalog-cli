@@ -21,12 +21,12 @@ import (
 )
 
 var catalogPushCmdLongHelp = `Push an application in the catalog. \
-The application should be named: [repoURL/]repoName/appName[:tag] `
+The application should be named: [catalog/]repoName/appName[:tag] `
 
 var catalogPushCmdShortHelp = `Push an application in the catalog.`
 
 var pushCmd = &cobra.Command{
-	Use:   "push <[repoURL/]repoName/appName[:tag]> <application_path>",
+	Use:   "push <[catalog/]repoName/appName[:tag]> <application_path>",
 	Long:  catalogPushCmdLongHelp,
 	Short: catalogPushCmdShortHelp,
 	Args:  cobra.ExactArgs(2),
@@ -44,7 +44,7 @@ var catalogPullCmdLongHelp = `Pull an application from catalog.`
 var catalogPullCmdShortHelp = `Pull an application from catalog.`
 
 var pullCmd = &cobra.Command{
-	Use:   "pull <[repoURL/]repoName/appName[:tag]>",
+	Use:   "pull <[catalog/]repoName/appName[:tag]>",
 	Long:  catalogPullCmdLongHelp,
 	Short: catalogPullCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
