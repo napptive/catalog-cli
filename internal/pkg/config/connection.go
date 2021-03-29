@@ -23,7 +23,7 @@ type ConnectionConfig struct {
 	// ServerAddress with the dns/IP of the catalog-manager gRPC server.
 	ServerAddress string
 	// ServerPort with the port of the catalog-manager gRPC server.
-	ServerPort int
+	CatalogPort int
 
 }
 
