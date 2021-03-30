@@ -174,7 +174,6 @@ func (c *Catalog) Pull(application string) error {
 	for {
 		fileReceived, err := downClient.Recv()
 		if err == io.EOF {
-			log.Debug().Msg("stop receiving")
 			_ = downClient.CloseSend()
 			break
 		}
