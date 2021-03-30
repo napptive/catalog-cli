@@ -171,7 +171,6 @@ func (c *Catalog) Pull(application string) error {
 
 	// Receive data
 	var files []*grpc_catalog_go.FileInfo
-	log.Debug().Msg("start receiving")
 	for {
 		fileReceived, err := downClient.Recv()
 		if err == io.EOF {
