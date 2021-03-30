@@ -17,12 +17,18 @@
 package operations
 
 import (
+	"archive/tar"
+	"compress/gzip"
 	"fmt"
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
+	"github.com/rs/zerolog"
+	"os"
+	"strings"
 
 	"github.com/napptive/catalog-cli/internal/pkg/printer"
 	"github.com/napptive/nerrors/pkg/nerrors"
 
-	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 // PrintResultOrError prints the result using a given printer or the error.
@@ -42,4 +48,76 @@ func PrintResultOrError(printer printer.ResultPrinter, result interface{}, err e
 			}
 		}
 	}
+}
+
+// SaveAndCompressFiles save the all the application files in a tgz file
+func SaveAndCompressFiles(resultFile string, files []*grpc_catalog_go.FileInfo) error {
+
+	// Create output file
+	out, err := os.Create(fmt.Sprintf("%s.tgz", resultFile))
+	if err != nil {
+		return nerrors.FromError(err)
+	}
+	defer out.Close()
+
+	// Create new Writers for gzip and tar
+	// These writers are chained. Writing to the tar writer will
+	// write to the gzip writer which in turn will write to
+	// the "buf" writer
+	gw := gzip.NewWriter(out)
+	defer gw.Close()
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	// Iterate over files and add them to the tar archive
+	for _, file := range files {
+		hdr := &tar.Header{
+			Name: file.Path,
+			Mode: 0600,
+			Size: int64(len(file.Data)),
+		}
+		if err := tw.WriteHeader(hdr); err != nil {
+			return nerrors.FromError(err)
+		}
+		if _, err := tw.Write([]byte(file.Data)); err != nil {
+			return nerrors.FromError(err)
+		}
+	}
+	log.Debug().Msg("Archive created successfully")
+	return nil
+}
+
+// DecomposeApplicationName decompose [catalogURL/]repoName/applicationName[:version] to
+// catalogURL, repoName, applicationName and version
+func DecomposeApplicationName (appName string) (string, string, string, string, error) {
+	applicationName := ""
+	repoName := ""
+	catalogName := ""
+	version := "latest"
+
+	names := strings.Split(appName, "/")
+	if len(names) != 2 && len(names) != 3 {
+		return "", "", "", "", nerrors.NewFailedPreconditionError(
+			"incorrect format for application name. [repoURL/]repoName/appName[:tag]")
+	}
+
+	// if len == 2 -> no url informed.
+	if len(names) == 3 {
+		catalogName = names[0]
+	}
+	repoName = names[len(names)-2]
+
+	// get the version -> appName[:tag]
+	sp := strings.Split(names[len(names)-1], ":")
+	if len(sp) == 1 {
+		applicationName = sp[0]
+	} else if len(sp) == 2 {
+		applicationName = sp[0]
+		version = sp[1]
+	} else {
+		return "", "", "", "",nerrors.NewFailedPreconditionError(
+			"incorrect format for application name. [repoURL/]repoName/appName[:tag]")
+	}
+
+	return catalogName, repoName, applicationName, version, nil
 }
