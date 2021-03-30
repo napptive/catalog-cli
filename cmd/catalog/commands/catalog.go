@@ -57,7 +57,26 @@ var pullCmd = &cobra.Command{
 	},
 }
 
+var catalogRemoveCmdLongHelp = `Remove an application from catalog.`
+
+var catalogRemoveCmdShortHelp = `Remove an application from catalog.`
+
+var removeCmd = &cobra.Command{
+	Use:   "remove <[catalog/]repoName/appName[:tag]>",
+	Long:  catalogRemoveCmdLongHelp,
+	Short: catalogRemoveCmdShortHelp,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error{
+		catalog, err := operations.NewCatalog(&cfg)
+		if err != nil {
+			return err
+		}
+		return catalog.Remove(args[0])
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
+	rootCmd.AddCommand(removeCmd)
 }
