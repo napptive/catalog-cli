@@ -184,8 +184,15 @@ func (c *Catalog) Pull(application string) error {
 		files = append(files, fileReceived)
 	}
 
+	// Get the application name
+	_, _, appName, _, err := DecomposeApplicationName(application)
+	if err != nil {
+		// It should not fail, in this case, the file will be named "application.tgz
+		appName = "application"
+	}
+
 	// Save the files in a tgz file
-	err = SaveAndCompressFiles("application", files)
+	err = SaveAndCompressFiles(appName, files)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, err)
 		return nil
@@ -193,7 +200,7 @@ func (c *Catalog) Pull(application string) error {
 	PrintResultOrError(c.ResultPrinter, &grpc_catalog_common_go.OpResponse{
 		Status:     grpc_catalog_common_go.OpStatus_SUCCESS,
 		StatusName: grpc_catalog_common_go.OpStatus_SUCCESS.String(),
-		UserInfo:   "Application pulled successfully",
+		UserInfo:   fmt.Sprintf("application saved on %s.tgz", appName),
 	}, nil)
 	return nil
 }

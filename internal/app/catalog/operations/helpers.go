@@ -23,6 +23,7 @@ import (
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/rs/zerolog"
 	"os"
+	"strings"
 
 	"github.com/napptive/catalog-cli/internal/pkg/printer"
 	"github.com/napptive/nerrors/pkg/nerrors"
@@ -84,4 +85,39 @@ func SaveAndCompressFiles(resultFile string, files []*grpc_catalog_go.FileInfo) 
 	}
 	log.Debug().Msg("Archive created successfully")
 	return nil
+}
+
+// DecomposeApplicationName decompose [catalogURL/]repoName/applicationName[:version] to
+// catalogURL, repoName, applicationName and version
+func DecomposeApplicationName (appName string) (string, string, string, string, error) {
+	applicationName := ""
+	repoName := ""
+	catalogName := ""
+	version := "latest"
+
+	names := strings.Split(appName, "/")
+	if len(names) != 2 && len(names) != 3 {
+		return "", "", "", "", nerrors.NewFailedPreconditionError(
+			"incorrect format for application name. [repoURL/]repoName/appName[:tag]")
+	}
+
+	// if len == 2 -> no url informed.
+	if len(names) == 3 {
+		catalogName = names[0]
+	}
+	repoName = names[len(names)-2]
+
+	// get the version -> appName[:tag]
+	sp := strings.Split(names[len(names)-1], ":")
+	if len(sp) == 1 {
+		applicationName = sp[0]
+	} else if len(sp) == 2 {
+		applicationName = sp[0]
+		version = sp[1]
+	} else {
+		return "", "", "", "",nerrors.NewFailedPreconditionError(
+			"incorrect format for application name. [repoURL/]repoName/appName[:tag]")
+	}
+
+	return catalogName, repoName, applicationName, version, nil
 }
