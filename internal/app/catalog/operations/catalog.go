@@ -145,10 +145,6 @@ func (c *Catalog) Push(application string, path string) error {
 	return nil
 }
 
-func (c *Catalog) CompressFiles (files []*grpc_catalog_go.FileInfo) error {
-	return nil
-}
-
 // Pull downloads application files
 func (c *Catalog) Pull(application string) error {
 
