@@ -204,3 +204,25 @@ func (c *Catalog) Pull(application string) error {
 	}, nil)
 	return nil
 }
+
+// Remove deletes an application from catalog repository
+func (c *Catalog) Remove(application string) error {
+	// Connection
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return nil
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := connection.GetContext()
+	defer cancel()
+	
+	// Call Delete op
+	response, err := client.Remove(ctx, &grpc_catalog_go.RemoveApplicationRequest{ApplicationName: application})
+	PrintResultOrError(c.ResultPrinter, response, err)
+	return nil
+}
