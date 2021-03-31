@@ -99,8 +99,8 @@ var catalogListCmdShortHelp = `List the applications`
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Long:  catalogInfoCmdLongHelp,
-	Short: catalogInfoCmdShortHelp,
+	Long:  catalogListCmdLongHelp,
+	Short: catalogListCmdShortHelp,
 	RunE: func(cmd *cobra.Command, args []string) error{
 		catalog, err := operations.NewCatalog(&cfg)
 		if err != nil {
