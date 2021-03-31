@@ -226,3 +226,47 @@ func (c *Catalog) Remove(application string) error {
 	PrintResultOrError(c.ResultPrinter, response, err)
 	return nil
 }
+
+// Info gets application information
+func (c *Catalog) Info (application string) error {
+	// Connection
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return nil
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := connection.GetContext()
+	defer cancel()
+
+	// Call Delete op
+	response, err := client.Info(ctx, &grpc_catalog_go.InfoApplicationRequest{ApplicationName: application})
+	PrintResultOrError(c.ResultPrinter, response, err)
+	return nil
+}
+
+// List returns the applications
+func (c *Catalog) List () error {
+	// Connection
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return nil
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := connection.GetContext()
+	defer cancel()
+
+	// Call Delete op
+	response, err := client.List(ctx, &grpc_catalog_common_go.EmptyRequest{})
+	PrintResultOrError(c.ResultPrinter, response, err)
+	return nil
+}
