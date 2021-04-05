@@ -30,8 +30,11 @@ const OpResponseTemplate = `STATUS	INFO
 `
 
 // InfoAppResponseTemplate with the table representation of an InfoAppResponse.
-const InfoAppResponseTemplate = `REPOSITORY	TAG	NAME	DESCRIPTION
-{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.Metadata.Name}}	{{.Metadata.Description}}
+const InfoAppResponseTemplate = `REPOSITORY	TAG	NAME	
+{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.Metadata.Name}}	
+
+DESCRIPTION
+{{.Metadata.Description}}
 
 TRAITS
 {{range $name := .Metadata.Requires.Traits}}{{$name}}
