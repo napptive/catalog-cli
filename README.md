@@ -1,7 +1,45 @@
 # catalog-cli
 A CLI to interact with Napptive Catalog.
 
-The purpose of this project is to provide a common template to develop Golang microservices in Napptive.
+This component is the entry point into Napptive catalog. 
+
+## Prerequisites
+
+- Component `catalog-manager` deployed
+
+## Commands
+
+To interact with the catalog, we offer several commands in `catalog-cli`.
+ ```
+ The catalog command provides a set of methods to interact with the Napptive Catalog
+
+Usage:
+  catalog [flags]
+  catalog [command]
+
+Examples:
+$ catalog
+
+Available Commands:
+  help        Help about any command
+  info        Get the principal information of an application.
+  list        List the applications
+  pull        Pull an application from catalog.
+  push        Push an application in the catalog.
+  remove      Remove an application from catalog.
+
+Flags:
+      --catalogAddress string   Catalog-manager host (default "catalog-manager")
+      --catalogPort int         Catalog-manager port (default 7060)
+      --consoleLogging          Pretty print logging
+      --debug                   Set debug level
+  -h, --help                    help for catalog
+      --output string           Output format in which the results will be returned: json or table (default "table")
+  -v, --version                 version for catalog
+
+Use "catalog [command] --help" for more information about a command.
+ ```
+
 
 ## Layout structure
 

@@ -75,8 +75,46 @@ var removeCmd = &cobra.Command{
 	},
 }
 
+var catalogInfoCmdLongHelp = `Get the principal information of an application.`
+
+var catalogInfoCmdShortHelp = `Get the principal information of an application.`
+
+var infoCmd = &cobra.Command{
+	Use:   "info <[catalog/]repoName/appName[:tag]>",
+	Long:  catalogInfoCmdLongHelp,
+	Short: catalogInfoCmdShortHelp,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error{
+		catalog, err := operations.NewCatalog(&cfg)
+		if err != nil {
+			return err
+		}
+		return catalog.Info(args[0])
+	},
+}
+
+var catalogListCmdLongHelp = `List the applications stored in the catalog`
+
+var catalogListCmdShortHelp = `List the applications`
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Long:  catalogListCmdLongHelp,
+	Short: catalogListCmdShortHelp,
+	RunE: func(cmd *cobra.Command, args []string) error{
+		catalog, err := operations.NewCatalog(&cfg)
+		if err != nil {
+			return err
+		}
+		return catalog.List()
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
+	rootCmd.AddCommand(infoCmd)
+	rootCmd.AddCommand(listCmd)
+
 }
