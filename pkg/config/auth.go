@@ -28,7 +28,7 @@ const AuthorizationHeader = "authorization"
 const AgentHeader = "agent"
 
 // AgentValue with the value for the agent payload.
-const AgentValue = "cli"
+const AgentValue = "catalog"
 
 // VersionHeader with the key name for the version payload.
 const VersionHeader = "version"
@@ -72,4 +72,3 @@ func (a *AuthToken) GetContext() (context.Context, context.CancelFunc) {
 	}
 	return context.WithTimeout(context.Background(), ContextTimeout)
 }
-
