@@ -65,10 +65,10 @@ func NewAuthToken(cfg *Config) *AuthToken {
 
 // GetContext returns a context depending if the metadata is enabled or not
 func (a *AuthToken) GetContext() (context.Context, context.CancelFunc) {
+		md := metadata.New(map[string]string{AgentHeader: AgentValue, VersionHeader: a.Version})
 	if a.AuthEnable {
-		md := metadata.New(map[string]string{AuthorizationHeader: a.Token, AgentHeader: AgentValue, VersionHeader: a.Version})
-		ctx := metadata.NewOutgoingContext(context.Background(), md)
-		return context.WithTimeout(ctx, ContextTimeout)
+		md = metadata.New(map[string]string{AuthorizationHeader: a.Token, AgentHeader: AgentValue, VersionHeader: a.Version})
 	}
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	return context.WithTimeout(context.Background(), ContextTimeout)
 }
