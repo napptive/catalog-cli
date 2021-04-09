@@ -30,6 +30,7 @@ import (
 )
 
 type Catalog struct {
+	*config.AuthToken
 	cfg *config.Config
 	printer.ResultPrinter
 }
@@ -43,6 +44,7 @@ func NewCatalog(cfg *config.Config) (*Catalog, error) {
 		return nil, err
 	}
 	return &Catalog{
+		AuthToken: config.NewAuthToken(cfg),
 		cfg:           cfg,
 		ResultPrinter: printer,
 	}, nil
@@ -106,7 +108,7 @@ func (c *Catalog) Push(application string, path string) error {
 	defer conn.Close()
 
 	client := grpc_catalog_go.NewCatalogClient(conn)
-	ctx, cancel := connection.GetContext()
+	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 
 	// Get response and print result
@@ -159,7 +161,7 @@ func (c *Catalog) Pull(application string) error {
 
 	// Client
 	client := grpc_catalog_go.NewCatalogClient(conn)
-	ctx, cancel := connection.GetContext()
+	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 
 	// Call Download
@@ -218,7 +220,7 @@ func (c *Catalog) Remove(application string) error {
 
 	// Client
 	client := grpc_catalog_go.NewCatalogClient(conn)
-	ctx, cancel := connection.GetContext()
+	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 	
 	// Call Delete op
@@ -240,7 +242,7 @@ func (c *Catalog) Info (application string) error {
 
 	// Client
 	client := grpc_catalog_go.NewCatalogClient(conn)
-	ctx, cancel := connection.GetContext()
+	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 
 	// Call Delete op
@@ -262,7 +264,7 @@ func (c *Catalog) List () error {
 
 	// Client
 	client := grpc_catalog_go.NewCatalogClient(conn)
-	ctx, cancel := connection.GetContext()
+	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 
 	// Call Delete op

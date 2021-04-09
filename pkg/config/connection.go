@@ -24,6 +24,8 @@ type ConnectionConfig struct {
 	CatalogAddress string
 	// ServerPort with the port of the catalog-manager gRPC server.
 	CatalogPort int
+	// AuthEnable with a flag to indicate if the authentication is enabled or not
+	AuthEnable bool
 
 }
 

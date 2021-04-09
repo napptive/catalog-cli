@@ -11,5 +11,6 @@ require (
 	github.com/onsi/gomega v1.10.5
 	github.com/rs/zerolog v1.20.0
 	github.com/spf13/cobra v1.1.1
+	github.com/spf13/viper v1.7.0
 	google.golang.org/grpc v1.36.0
 )

@@ -26,7 +26,8 @@ import (
 
 // OpResponseTemplate with the table representation of an OpResponse.
 const OpResponseTemplate = `STATUS	INFO
-{{.StatusName}}	{{.UserInfo}}`
+{{.StatusName}}	{{.UserInfo}}
+`
 
 // InfoAppResponseTemplate with the table representation of an InfoAppResponse.
 const InfoAppResponseTemplate = `REPOSITORY	TAG	NAME	
@@ -43,7 +44,8 @@ SCOPES
 {{end}}
 K8S_ENTITIES
 {{range .Metadata.Requires.K8S}}{{.ApiVersion}}/{{.Kind}}
-{{end}}`
+{{end}}
+`
 
 const ApplicationListTemplate = `REPOSITORY	TAG	NAME
 {{range .Applications}}{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.MetadataName}}
