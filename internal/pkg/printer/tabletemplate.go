@@ -49,8 +49,7 @@ K8S_ENTITIES
 
 const ApplicationListTemplate = `REPOSITORY	TAG	NAME
 {{range .Applications}}{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.MetadataName}}
-{{end}}
-`
+{{end}}`
 
 // structTemplates map associating type and template to print it.
 var structTemplates = map[reflect.Type]string{

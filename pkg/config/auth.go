@@ -70,5 +70,5 @@ func (a *AuthToken) GetContext() (context.Context, context.CancelFunc) {
 		md = metadata.New(map[string]string{AuthorizationHeader: a.Token, AgentHeader: AgentValue, VersionHeader: a.Version})
 	}
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	return context.WithTimeout(context.Background(), ContextTimeout)
+	return context.WithTimeout(ctx, ContextTimeout)
 }
