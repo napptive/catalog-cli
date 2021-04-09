@@ -19,15 +19,23 @@ package commands
 import (
 	"fmt"
 	"os"
+	"os/user"
 
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 )
 
 var cfg config.Config
+
+// tokenViper in charge of reading the JWT token returned on a login operation.
+var tokenViper = viper.New()
+
+var DefaultConfigLocation = []string{"."}
 
 var debugLevel bool
 var consoleLogging bool
@@ -58,6 +66,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog-manager", "Catalog-manager host")
 	rootCmd.PersistentFlags().IntVar(&cfg.CatalogPort, "catalogPort", 7060, "Catalog-manager port")
+	rootCmd.PersistentFlags().BoolVar(&cfg.AuthEnable, "authEnable", true, "JWT authentication enable")
 
 }
 
@@ -76,6 +85,9 @@ func Execute(version string, commit string) {
 
 func initConfig() {
 	setupLogging()
+	if cfg.AuthEnable {
+		readConfiguration()
+	}
 }
 
 // setupLogging sets the debug level and console logging if required.
@@ -88,4 +100,43 @@ func setupLogging() {
 	if consoleLogging {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 	}
+}
+
+// getConfigLocations resolves the location of platform dependend directories such as the user home.
+func getConfigLocations() []string {
+	result := DefaultConfigLocation
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal().Err(err).Msg("unable to determine user home")
+	}
+	result = append(result, fmt.Sprintf("%s/.napptive", usr.HomeDir))
+	return result
+}
+
+func readConfiguration() {
+
+	// token configuration
+	tokenViper.SetConfigName(".token")
+	tokenViper.SetConfigType("yaml")
+
+
+	for _, location := range getConfigLocations() {
+		tokenViper.AddConfigPath(location)
+	}
+	// Load the token information if any
+	if err := tokenViper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Fatal().Err(err).Msg("unable to read token file")
+		} else {
+			log.Debug().Msg("CLI is not authenticated")
+		}
+	} else {
+		log.Debug().Str("path", tokenViper.ConfigFileUsed()).Msg("token loaded")
+	}
+
+	// Unmarshal resulting values in the CLI configuration.
+	if err := tokenViper.Unmarshal(&cfg.TokenConfig); err != nil {
+		log.Fatal().Err(err).Msg("unable to unmarshal resolved token into config structure. Check structure/file structure for a mismatch")
+	}
+
 }

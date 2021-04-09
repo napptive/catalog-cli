@@ -23,6 +23,7 @@ import (
 // Config structure with all the options required by the service and service components.
 type Config struct {
 	ConnectionConfig
+	TokenConfig
 	Version string
 	Commit  string
 	Debug   bool
@@ -36,6 +37,7 @@ func (c *Config) IsValid() error {
 	if err := c.ConnectionConfig.IsValid(); err != nil {
 		return err
 	}
+
 	return nil
 }
 
