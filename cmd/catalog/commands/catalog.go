@@ -16,7 +16,7 @@
 package commands
 
 import (
-	"github.com/napptive/catalog-cli/internal/app/catalog/operations"
+	"github.com/napptive/catalog-cli/pkg/catalog/operations"
 	"github.com/spf13/cobra"
 )
 
