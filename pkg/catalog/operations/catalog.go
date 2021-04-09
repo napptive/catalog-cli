@@ -17,9 +17,9 @@ package operations
 
 import (
 	"fmt"
-	"github.com/napptive/catalog-cli/internal/pkg/config"
 	"github.com/napptive/catalog-cli/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/internal/pkg/printer"
+	"github.com/napptive/catalog-cli/pkg/config"
 	grpc_catalog_common_go "github.com/napptive/grpc-catalog-common-go"
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
