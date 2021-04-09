@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/napptive/catalog-cli/internal/pkg/config"
+	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
