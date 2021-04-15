@@ -62,6 +62,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&debugLevel, "debug", false, "Set debug level")
 	rootCmd.PersistentFlags().BoolVar(&consoleLogging, "consoleLogging", false, "Pretty print logging")
 
+	// noPrinter allowed yet, but this value is only for internal use
 	rootCmd.PersistentFlags().StringVar( &cfg.PrinterType, "output", "table", "Output format in which the results will be returned: json or table")
 
 	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog-manager", "Catalog-manager host")
