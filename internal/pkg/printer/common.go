@@ -32,6 +32,8 @@ func GetPrinter(printerType string) (ResultPrinter, error) {
 		return NewJSONPrinter()
 	case "table":
 		return NewTablePrinter()
+	case "noPrinter":
+		return NewNoPrinter()
 	}
 	return nil, nerrors.NewUnavailableError("printer type not supported: [%s]", printerType)
 }
