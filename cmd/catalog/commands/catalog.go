@@ -21,12 +21,12 @@ import (
 )
 
 var catalogPushCmdLongHelp = `Push an application in the catalog. \
-The application should be named: [catalog/]repoName/appName[:tag] `
+The application should be named: [catalog/]namespace/appName[:tag] `
 
 var catalogPushCmdShortHelp = `Push an application in the catalog.`
 
 var pushCmd = &cobra.Command{
-	Use:   "push <[catalog/]repoName/appName[:tag]> <application_path>",
+	Use:   "push <[catalog/]namespace/appName[:tag]> <application_path>",
 	Long:  catalogPushCmdLongHelp,
 	Short: catalogPushCmdShortHelp,
 	Args:  cobra.ExactArgs(2),
@@ -44,7 +44,7 @@ var catalogPullCmdLongHelp = `Pull an application from catalog.`
 var catalogPullCmdShortHelp = `Pull an application from catalog.`
 
 var pullCmd = &cobra.Command{
-	Use:   "pull <[catalog/]repoName/appName[:tag]>",
+	Use:   "pull <[catalog/]namespace/appName[:tag]>",
 	Long:  catalogPullCmdLongHelp,
 	Short: catalogPullCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
@@ -62,11 +62,11 @@ var catalogRemoveCmdLongHelp = `Remove an application from catalog.`
 var catalogRemoveCmdShortHelp = `Remove an application from catalog.`
 
 var removeCmd = &cobra.Command{
-	Use:   "remove <[catalog/]repoName/appName[:tag]>",
+	Use:   "remove <[catalog/]namespace/appName[:tag]>",
 	Long:  catalogRemoveCmdLongHelp,
 	Short: catalogRemoveCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error{
+	RunE: func(cmd *cobra.Command, args []string) error {
 		catalog, err := operations.NewCatalog(&cfg)
 		if err != nil {
 			return err
@@ -80,11 +80,11 @@ var catalogInfoCmdLongHelp = `Get the principal information of an application.`
 var catalogInfoCmdShortHelp = `Get the principal information of an application.`
 
 var infoCmd = &cobra.Command{
-	Use:   "info <[catalog/]repoName/appName[:tag]>",
+	Use:   "info <[catalog/]namespace/appName[:tag]>",
 	Long:  catalogInfoCmdLongHelp,
 	Short: catalogInfoCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error{
+	RunE: func(cmd *cobra.Command, args []string) error {
 		catalog, err := operations.NewCatalog(&cfg)
 		if err != nil {
 			return err
@@ -98,15 +98,20 @@ var catalogListCmdLongHelp = `List the applications stored in the catalog`
 var catalogListCmdShortHelp = `List the applications`
 
 var listCmd = &cobra.Command{
-	Use:   "list",
+	Use:   "list [namespace]",
 	Long:  catalogListCmdLongHelp,
 	Short: catalogListCmdShortHelp,
-	RunE: func(cmd *cobra.Command, args []string) error{
+	Args:  cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
 		catalog, err := operations.NewCatalog(&cfg)
 		if err != nil {
 			return err
 		}
-		return catalog.List()
+		targetNamespace := ""
+		if len(args) == 1 {
+			targetNamespace = args[0]
+		}
+		return catalog.List(targetNamespace)
 	},
 }
 
@@ -116,5 +121,4 @@ func init() {
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(infoCmd)
 	rootCmd.AddCommand(listCmd)
-
 }

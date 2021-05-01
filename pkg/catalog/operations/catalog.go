@@ -17,6 +17,10 @@ package operations
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+
 	"github.com/napptive/catalog-cli/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/internal/pkg/printer"
 	"github.com/napptive/catalog-cli/pkg/config"
@@ -24,9 +28,6 @@ import (
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"github.com/rs/zerolog/log"
-	"io"
-	"io/ioutil"
-	"os"
 )
 
 type Catalog struct {
@@ -44,7 +45,7 @@ func NewCatalog(cfg *config.Config) (*Catalog, error) {
 		return nil, err
 	}
 	return &Catalog{
-		AuthToken: config.NewAuthToken(cfg),
+		AuthToken:     config.NewAuthToken(cfg),
 		cfg:           cfg,
 		ResultPrinter: printer,
 	}, nil
@@ -86,8 +87,8 @@ func (c *Catalog) loadApp(path string, relativePath string) ([]string, error) {
 }
 
 // Push adds a new application to catalog
-func (c *Catalog) Push(application string, path string) error {
-	log.Debug().Str("application", application).Str("path", path).Msg("Push received!")
+func (c *Catalog) Push(applicationID string, path string) error {
+	log.Debug().Str("applicationID", applicationID).Str("path", path).Msg("Push received!")
 
 	// Read the path and compose the AddCatalogRequest
 	names, err := c.loadApp(path, ".")
@@ -125,7 +126,7 @@ func (c *Catalog) Push(application string, path string) error {
 			return nil
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
-			ApplicationName: application,
+			ApplicationId: applicationID,
 			File: &grpc_catalog_go.FileInfo{
 				Path: fileName,
 				Data: data,
@@ -148,7 +149,7 @@ func (c *Catalog) Push(application string, path string) error {
 }
 
 // Pull downloads application files
-func (c *Catalog) Pull(application string) error {
+func (c *Catalog) Pull(applicationID string) error {
 
 	// Connection
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
@@ -165,7 +166,7 @@ func (c *Catalog) Pull(application string) error {
 	defer cancel()
 
 	// Call Download
-	downClient, err := client.Download(ctx, &grpc_catalog_go.DownloadApplicationRequest{ApplicationName: application})
+	downClient, err := client.Download(ctx, &grpc_catalog_go.DownloadApplicationRequest{ApplicationId: applicationID})
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, err)
 		return nil
@@ -187,7 +188,7 @@ func (c *Catalog) Pull(application string) error {
 	}
 
 	// Get the application name
-	_, _, appName, _, err := DecomposeApplicationName(application)
+	_, _, appName, _, err := DecomposeApplicationName(applicationID)
 	if err != nil {
 		// It should not fail, in this case, the file will be named "application.tgz
 		appName = "application"
@@ -208,7 +209,7 @@ func (c *Catalog) Pull(application string) error {
 }
 
 // Remove deletes an application from catalog repository
-func (c *Catalog) Remove(application string) error {
+func (c *Catalog) Remove(applicationID string) error {
 	// Connection
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
@@ -222,15 +223,15 @@ func (c *Catalog) Remove(application string) error {
 	client := grpc_catalog_go.NewCatalogClient(conn)
 	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
-	
+
 	// Call Delete op
-	response, err := client.Remove(ctx, &grpc_catalog_go.RemoveApplicationRequest{ApplicationName: application})
+	response, err := client.Remove(ctx, &grpc_catalog_go.RemoveApplicationRequest{ApplicationId: applicationID})
 	PrintResultOrError(c.ResultPrinter, response, err)
 	return nil
 }
 
 // Info gets application information
-func (c *Catalog) Info (application string) error {
+func (c *Catalog) Info(application string) error {
 	// Connection
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
@@ -246,13 +247,13 @@ func (c *Catalog) Info (application string) error {
 	defer cancel()
 
 	// Call Delete op
-	response, err := client.Info(ctx, &grpc_catalog_go.InfoApplicationRequest{ApplicationName: application})
+	response, err := client.Info(ctx, &grpc_catalog_go.InfoApplicationRequest{ApplicationId: application})
 	PrintResultOrError(c.ResultPrinter, response, err)
 	return nil
 }
 
 // List returns the applications
-func (c *Catalog) List () error {
+func (c *Catalog) List(targetNamespace string) error {
 	// Connection
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
@@ -267,8 +268,9 @@ func (c *Catalog) List () error {
 	ctx, cancel := c.AuthToken.GetContext()
 	defer cancel()
 
-	// Call Delete op
-	response, err := client.List(ctx, &grpc_catalog_common_go.EmptyRequest{})
+	response, err := client.List(ctx, &grpc_catalog_go.ListApplicationsRequest{
+		Namespace: targetNamespace,
+	})
 	PrintResultOrError(c.ResultPrinter, response, err)
 	return nil
 }

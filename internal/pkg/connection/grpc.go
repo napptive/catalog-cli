@@ -17,6 +17,7 @@ package connection
 
 import (
 	"fmt"
+
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
