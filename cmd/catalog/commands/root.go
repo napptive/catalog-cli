@@ -24,10 +24,8 @@ import (
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
 )
 
 var cfg config.Config
@@ -63,7 +61,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&consoleLogging, "consoleLogging", false, "Pretty print logging")
 
 	// noPrinter allowed yet, but this value is only for internal use
-	rootCmd.PersistentFlags().StringVar( &cfg.PrinterType, "output", "table", "Output format in which the results will be returned: json or table")
+	rootCmd.PersistentFlags().StringVar(&cfg.PrinterType, "output", "table", "Output format in which the results will be returned: json or table")
 
 	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog-manager", "Catalog-manager host")
 	rootCmd.PersistentFlags().IntVar(&cfg.CatalogPort, "catalogPort", 7060, "Catalog-manager port")
@@ -119,7 +117,6 @@ func readConfiguration() {
 	// token configuration
 	tokenViper.SetConfigName(".token")
 	tokenViper.SetConfigType("yaml")
-
 
 	for _, location := range getConfigLocations() {
 		tokenViper.AddConfigPath(location)

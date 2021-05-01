@@ -17,10 +17,10 @@
 package printer
 
 import (
-	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"reflect"
 
-	"github.com/napptive/grpc-catalog-common-go"
+	grpc_catalog_common_go "github.com/napptive/grpc-catalog-common-go"
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
 )
 
@@ -30,32 +30,29 @@ const OpResponseTemplate = `STATUS	INFO
 `
 
 // InfoAppResponseTemplate with the table representation of an InfoAppResponse.
-const InfoAppResponseTemplate = `REPOSITORY	TAG	NAME	
-{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.Metadata.Name}}	
+const InfoAppResponseTemplate = `APP_ID	NAME
+{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.Metadata.Name}}	
 
 DESCRIPTION
 {{.Metadata.Description}}
 
-TRAITS
+{{if .Metadata.Requires.Traits}}TRAITS
 {{range $name := .Metadata.Requires.Traits}}{{$name}}
-{{end}}
-SCOPES
+{{end}}{{end}}{{if .Metadata.Requires.Scopes}}SCOPES
 {{range $name := .Metadata.Requires.Scopes}}{{$name}}
-{{end}}
-K8S_ENTITIES
+{{end}}{{end}}{{if .Metadata.Requires.K8S}}K8S_ENTITIES
 {{range .Metadata.Requires.K8S}}{{.ApiVersion}}/{{.Kind}}
-{{end}}
-`
+{{end}}{{end}}`
 
-const ApplicationListTemplate = `REPOSITORY	TAG	NAME
-{{range .Applications}}{{.RepositoryName}}/{{.ApplicationName}}	{{.Tag}}	{{.MetadataName}}
+const ApplicationListTemplate = `APP_ID	NAME
+{{range .Applications}}{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.MetadataName}}
 {{end}}`
 
 // structTemplates map associating type and template to print it.
 var structTemplates = map[reflect.Type]string{
-	reflect.TypeOf(&grpc_catalog_common_go.OpResponse{}): OpResponseTemplate,
+	reflect.TypeOf(&grpc_catalog_common_go.OpResponse{}):       OpResponseTemplate,
 	reflect.TypeOf(&grpc_catalog_go.InfoApplicationResponse{}): InfoAppResponseTemplate,
-	reflect.TypeOf(&grpc_catalog_go.ApplicationList{}): ApplicationListTemplate,
+	reflect.TypeOf(&grpc_catalog_go.ApplicationList{}):         ApplicationListTemplate,
 }
 
 // GetTemplate returns a template to print an arbitrary structure in table format.
@@ -66,4 +63,3 @@ func GetTemplate(result interface{}) (*string, error) {
 	}
 	return &template, nil
 }
-

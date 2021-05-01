@@ -17,8 +17,9 @@ package config
 
 import (
 	"context"
-	"google.golang.org/grpc/metadata"
 	"time"
+
+	"google.golang.org/grpc/metadata"
 )
 
 // AuthorizationHeader with the key name for the authorization payload.
@@ -49,9 +50,9 @@ type AuthToken struct {
 	// AuthEnable with a flag if the authentication is enabled or not
 	AuthEnable bool
 	// Token with the token to send
-	Token      string
+	Token string
 	// Version with the version sent in the metadata
-	Version    string
+	Version string
 }
 
 // NewContextHelper creates a ContextHelper with a given configuration.
@@ -65,7 +66,7 @@ func NewAuthToken(cfg *Config) *AuthToken {
 
 // GetContext returns a context depending if the metadata is enabled or not
 func (a *AuthToken) GetContext() (context.Context, context.CancelFunc) {
-		md := metadata.New(map[string]string{AgentHeader: AgentValue, VersionHeader: a.Version})
+	md := metadata.New(map[string]string{AgentHeader: AgentValue, VersionHeader: a.Version})
 	if a.AuthEnable {
 		md = metadata.New(map[string]string{AuthorizationHeader: a.Token, AgentHeader: AgentValue, VersionHeader: a.Version})
 	}
