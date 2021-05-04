@@ -35,14 +35,16 @@ const InfoAppResponseTemplate = `APP_ID	NAME
 
 DESCRIPTION
 {{.Metadata.Description}}
-
 {{if .Metadata.Requires.Traits}}TRAITS
 {{range $name := .Metadata.Requires.Traits}}{{$name}}
 {{end}}{{end}}{{if .Metadata.Requires.Scopes}}SCOPES
 {{range $name := .Metadata.Requires.Scopes}}{{$name}}
 {{end}}{{end}}{{if .Metadata.Requires.K8S}}K8S_ENTITIES
 {{range .Metadata.Requires.K8S}}{{.ApiVersion}}/{{.Kind}}
-{{end}}{{end}}`
+{{end}}{{end}}
+README
+{{toString .ReadmeFile}}
+`
 
 const ApplicationListTemplate = `APP_ID	NAME
 {{range .Applications}}{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.MetadataName}}

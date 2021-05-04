@@ -46,13 +46,19 @@ func NewTablePrinter() (ResultPrinter, error) {
 	return &TablePrinter{}, nil
 }
 
+func (tp *TablePrinter) toString(content []byte) string {
+	return string(content)
+}
+
 // Print the result.
 func (tp *TablePrinter) Print(result interface{}) error {
 	associatedTemplate, err := GetTemplate(result)
 	if err != nil {
 		return err
 	}
-	t := template.New("TablePrinter")
+	t := template.New("TablePrinter").Funcs(template.FuncMap{
+		"toString": tp.toString,
+	})
 	t, err = t.Parse(*associatedTemplate)
 	if err != nil {
 		return nerrors.NewInternalErrorFrom(err, "cannot apply template")
@@ -64,4 +70,3 @@ func (tp *TablePrinter) Print(result interface{}) error {
 	w.Flush()
 	return nil
 }
-
