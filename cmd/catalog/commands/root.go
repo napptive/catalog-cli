@@ -101,7 +101,7 @@ func setupLogging() {
 	}
 }
 
-// getConfigLocations resolves the location of platform dependend directories such as the user home.
+// getConfigLocations resolves the location of platform dependent directories such as the user home.
 func getConfigLocations() []string {
 	result := DefaultConfigLocation
 	usr, err := user.Current()

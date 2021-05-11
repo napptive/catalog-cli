@@ -100,7 +100,7 @@ func (c *Catalog) Push(applicationID string, path string) error {
 
 	// Send the request
 	// Read the paths and compose the AddCatalogRequest
-	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
@@ -152,7 +152,7 @@ func (c *Catalog) Push(applicationID string, path string) error {
 func (c *Catalog) Pull(applicationID string) error {
 
 	// Connection
-	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
@@ -210,8 +210,9 @@ func (c *Catalog) Pull(applicationID string) error {
 
 // Remove deletes an application from catalog repository
 func (c *Catalog) Remove(applicationID string) error {
+
 	// Connection
-	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
@@ -233,7 +234,7 @@ func (c *Catalog) Remove(applicationID string) error {
 // Info gets application information
 func (c *Catalog) Info(application string) error {
 	// Connection
-	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, application)
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
