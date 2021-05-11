@@ -25,7 +25,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GetConnectionToCatalog creates 
+// GetConnectionToCatalog creates
 func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) (*grpc.ClientConn, error){
 	// Get CatalogURl from ApplicationID (this method validates the applicationID format too)
 	catalogURL, err := GetURL(cfg, applicationID)
