@@ -93,6 +93,7 @@ var infoCmd = &cobra.Command{
 	},
 }
 
+
 var catalogListCmdLongHelp = `List the applications stored in the catalog`
 
 var catalogListCmdShortHelp = `List the applications`
@@ -120,5 +121,6 @@ func init() {
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(infoCmd)
+
 	rootCmd.AddCommand(listCmd)
 }
