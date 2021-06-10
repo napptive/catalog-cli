@@ -93,7 +93,6 @@ var infoCmd = &cobra.Command{
 	},
 }
 
-
 var catalogListCmdLongHelp = `List the applications stored in the catalog`
 
 var catalogListCmdShortHelp = `List the applications`
@@ -116,11 +115,31 @@ var listCmd = &cobra.Command{
 	},
 }
 
+var catalogSummaryCmdLongHelp = `Get te catalog summary. # Namespaces, # Applications and # Tags`
+
+var catalogSummaryCmdShortHelp = `Get te catalog summary.`
+
+var summaryCmd = &cobra.Command{
+	Use:     "summary",
+	Long:    catalogListCmdLongHelp,
+	Short:   catalogListCmdShortHelp,
+	Aliases: []string{"sum"},
+	Args:    cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		catalog, err := operations.NewCatalog(&cfg)
+		if err != nil {
+			return err
+		}
+		return catalog.Summary()
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(infoCmd)
+	rootCmd.AddCommand(summaryCmd)
 
 	rootCmd.AddCommand(listCmd)
 }
