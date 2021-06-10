@@ -47,7 +47,7 @@ README
 `
 
 const ApplicationListTemplate = `APPLICATION	VERSIONS
-{{range .Applications}}{{.Namespace}}/{{.ApplicationName}}	{{range $key, $value := .TagMetadataName}} {{ $key }} {{end}}	
+{{range .Applications}}{{.Namespace}}/{{.ApplicationName}}	{{range $key, $value := .TagMetadataName}}{{ $key }} {{end}}	
 {{end}}`
 
 // structTemplates map associating type and template to print it.
