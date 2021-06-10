@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.4.0 // indirect
 	github.com/napptive/grpc-catalog-common-go v0.2.0
-	github.com/napptive/grpc-catalog-go v0.9.0
+	github.com/napptive/grpc-catalog-go v0.10.0
 	github.com/napptive/nerrors v1.0.0
 	github.com/onsi/ginkgo v1.16.1
 	github.com/onsi/gomega v1.11.0
