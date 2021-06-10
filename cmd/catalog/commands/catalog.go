@@ -121,8 +121,8 @@ var catalogSummaryCmdShortHelp = `Get te catalog summary.`
 
 var summaryCmd = &cobra.Command{
 	Use:     "summary",
-	Long:    catalogListCmdLongHelp,
-	Short:   catalogListCmdShortHelp,
+	Long:    catalogSummaryCmdLongHelp,
+	Short:   catalogSummaryCmdShortHelp,
 	Aliases: []string{"sum"},
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
