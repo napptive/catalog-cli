@@ -50,11 +50,17 @@ const ApplicationListTemplate = `APPLICATION	VERSIONS
 {{range .Applications}}{{.Namespace}}/{{.ApplicationName}}	{{range $key, $value := .TagMetadataName}}{{ $key }} {{end}}	
 {{end}}`
 
+const SummaryResponseTemplate = `NAMESPACES	APPLICATIONS	TAGS
+{{.NumNamespaces}}	{{.NumApplications}}	{{.NumTags}}
+`
+
 // structTemplates map associating type and template to print it.
 var structTemplates = map[reflect.Type]string{
 	reflect.TypeOf(&grpc_catalog_common_go.OpResponse{}):       OpResponseTemplate,
 	reflect.TypeOf(&grpc_catalog_go.InfoApplicationResponse{}): InfoAppResponseTemplate,
 	reflect.TypeOf(&grpc_catalog_go.ApplicationList{}):         ApplicationListTemplate,
+	reflect.TypeOf(&grpc_catalog_go.SummaryResponse{}):         SummaryResponseTemplate,
+	//
 }
 
 // GetTemplate returns a template to print an arbitrary structure in table format.
