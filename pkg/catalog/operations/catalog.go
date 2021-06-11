@@ -275,3 +275,25 @@ func (c *Catalog) List(targetNamespace string) error {
 	PrintResultOrError(c.ResultPrinter, response, err)
 	return nil
 }
+
+func (c *Catalog) Summary() error {
+	// Connection
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return nil
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := c.AuthToken.GetContext()
+	defer cancel()
+
+	// Get Summary
+	summary, err := client.Summary(ctx, &grpc_catalog_common_go.EmptyRequest{})
+	PrintResultOrError(c.ResultPrinter, summary, err)
+
+	return nil
+}
