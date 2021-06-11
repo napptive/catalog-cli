@@ -49,6 +49,21 @@ func PrintResultOrError(printer printer.ResultPrinter, result interface{}, err e
 	}
 }
 
+func SaveFile (resultFile string, file *grpc_catalog_go.FileInfo) error {
+	// Create output file
+	out, err := os.Create(fmt.Sprintf(file.Path))
+	if err != nil {
+		return nerrors.NewInternalErrorFrom(err, "Error creating file")
+	}
+	defer out.Close()
+
+	if _, err = out.Write(file.Data); err != nil {
+		return nerrors.NewInternalErrorFrom(err, "Error writing file")
+	}
+
+	return nil
+}
+
 // SaveAndCompressFiles save the all the application files in a tgz file
 func SaveAndCompressFiles(resultFile string, files []*grpc_catalog_go.FileInfo) error {
 

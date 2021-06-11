@@ -166,7 +166,9 @@ func (c *Catalog) Pull(applicationID string) error {
 	defer cancel()
 
 	// Call Download
-	downClient, err := client.Download(ctx, &grpc_catalog_go.DownloadApplicationRequest{ApplicationId: applicationID})
+	downClient, err := client.Download(ctx, &grpc_catalog_go.DownloadApplicationRequest{
+		ApplicationId: applicationID, Compressed: true,
+	})
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, err)
 		return nil
@@ -195,7 +197,7 @@ func (c *Catalog) Pull(applicationID string) error {
 	}
 
 	// Save the files in a tgz file
-	err = SaveAndCompressFiles(appName, files)
+	err = SaveFile(appName, files[0])
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, err)
 		return nil
@@ -203,8 +205,9 @@ func (c *Catalog) Pull(applicationID string) error {
 	PrintResultOrError(c.ResultPrinter, &grpc_catalog_common_go.OpResponse{
 		Status:     grpc_catalog_common_go.OpStatus_SUCCESS,
 		StatusName: grpc_catalog_common_go.OpStatus_SUCCESS.String(),
-		UserInfo:   fmt.Sprintf("application saved on %s.tgz", appName),
+		UserInfo:   fmt.Sprintf("application saved on %s", files[0].Path),
 	}, nil)
+
 	return nil
 }
 
