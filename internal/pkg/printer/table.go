@@ -17,6 +17,8 @@
 package printer
 
 import (
+	"fmt"
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"os"
 	"text/tabwriter"
 	"text/template"
@@ -50,6 +52,17 @@ func (tp *TablePrinter) toString(content []byte) string {
 	return string(content)
 }
 
+// fromApplicationSummary composes the application in a catalog as
+// namespace/appName:tag Medatada_Name
+func (tp *TablePrinter) fromApplicationSummary(app *grpc_catalog_go.ApplicationSummary) string {
+
+	var result string
+	for version, name := range app.TagMetadataName {
+		result += fmt.Sprintf("%s/%s:%s\t%s\n", app.Namespace, app.ApplicationName, version, name)
+	}
+	return result
+}
+
 // Print the result.
 func (tp *TablePrinter) Print(result interface{}) error {
 	associatedTemplate, err := GetTemplate(result)
@@ -57,7 +70,8 @@ func (tp *TablePrinter) Print(result interface{}) error {
 		return err
 	}
 	t := template.New("TablePrinter").Funcs(template.FuncMap{
-		"toString": tp.toString,
+		"toString":               tp.toString,
+		"fromApplicationSummary": tp.fromApplicationSummary,
 	})
 	t, err = t.Parse(*associatedTemplate)
 	if err != nil {

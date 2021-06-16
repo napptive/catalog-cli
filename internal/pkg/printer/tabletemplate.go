@@ -47,8 +47,7 @@ README
 `
 
 const ApplicationListTemplate = `APPLICATION	VERSIONS
-{{range .Applications}}{{.Namespace}}/{{.ApplicationName}}	{{range $key, $value := .TagMetadataName}}{{ $key }} {{end}}	
-{{end}}`
+{{range $other, $app := .Applications}}{{fromApplicationSummary $app}}{{end}}`
 
 const SummaryResponseTemplate = `NAMESPACES	APPLICATIONS	TAGS
 {{.NumNamespaces}}	{{.NumApplications}}	{{.NumTags}}
