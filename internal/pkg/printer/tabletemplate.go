@@ -46,7 +46,7 @@ README
 {{toString .ReadmeFile}}
 `
 
-const ApplicationListTemplate = `APPLICATION	VERSIONS
+const ApplicationListTemplate = `APPLICATION	NAME
 {{range $other, $app := .Applications}}{{fromApplicationSummary $app}}{{end}}`
 
 const SummaryResponseTemplate = `NAMESPACES	APPLICATIONS	TAGS
