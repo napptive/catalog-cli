@@ -154,8 +154,7 @@ func (c *Catalog) Pull(applicationID string) error {
 	// Connection
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
-			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		PrintResultOrError(c.ResultPrinter, nil, err)
 		return nil
 	}
 	defer conn.Close()
