@@ -55,7 +55,7 @@ func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 	names := strings.Split(appName, "/")
 	if len(names) != 2 && len(names) != 3 {
 		return "", nerrors.NewFailedPreconditionError(
-			"incorrect format for application name. [catalogURL/]namespace/appName[:tag]")
+			"Incorrect format for application name. It should be [catalogURL/]namespace/appName[:tag]")
 	}
 
 	if len(names) == 3 {
