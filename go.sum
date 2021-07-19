@@ -222,8 +222,8 @@ github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3Rllmb
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/napptive/grpc-catalog-common-go v0.2.0 h1:BdIYVOEmzIZbzbVvjKnd9/8T8nQfNqZeEzzVCXjWhvI=
 github.com/napptive/grpc-catalog-common-go v0.2.0/go.mod h1:bnedZvTuFnhO2q1u66EUseAy3k0/N5MW/BFvb8S23bA=
-github.com/napptive/grpc-catalog-go v0.13.0 h1:kNLTJYgt+pc98W2fvds5yMJ6/U4ShO+zXppLEuums7k=
-github.com/napptive/grpc-catalog-go v0.13.0/go.mod h1:BoOdDpZZlW8rWNlSe2/mjG9JC6+UCLlZkUNovwMFxY0=
+github.com/napptive/grpc-catalog-go v0.16.0 h1:u832OVhpHojFqkM5nK0kK4QY4bMa0U3MPpzlUJj9Eyw=
+github.com/napptive/grpc-catalog-go v0.16.0/go.mod h1:BoOdDpZZlW8rWNlSe2/mjG9JC6+UCLlZkUNovwMFxY0=
 github.com/napptive/grpc-common-go v0.2.0 h1:ewtSAF75kEl8eYwKNOIXwNWLX8bTB7N2W1qrCPCJYV4=
 github.com/napptive/grpc-common-go v0.2.0/go.mod h1:Q896cZY+yIkted9zYw3jtguVDdfL1bqTHjjiirBTjnw=
 github.com/napptive/nerrors v1.0.0 h1:LADBxnAFPfsswumOVQC/17IUDJ2EXYsAYWEnXAmgv2o=
