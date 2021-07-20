@@ -48,7 +48,6 @@ func GetTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.Clien
 		InsecureSkipVerify: cfg.SkipCertValidation,
 	}
 	tlsCredentials := credentials.NewTLS(tlsConfig)
-	// return grpc.Dial(cfg.GetEffectiveAddress(), grpc.WithTransportCredentials(tlsCredentials))
 	return grpc.Dial(address, grpc.WithTransportCredentials(tlsCredentials))
 }
 
@@ -64,7 +63,6 @@ func GetConnection(cfg *config.ConnectionConfig) (*grpc.ClientConn, error) {
 // GetNonTLSConnection returns a plain connection with the playground server.
 func GetNonTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.ClientConn, error) {
 	log.Debug().Msg("using insecure connection with the Catalog-Manager")
-	// return grpc.Dial(fmt.Sprintf("%s:%d", cfg.CatalogAddress, cfg.CatalogPort), grpc.WithInsecure())
 	return grpc.Dial(address, grpc.WithInsecure())
 }
 
