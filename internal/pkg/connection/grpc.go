@@ -38,7 +38,6 @@ func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) 
 		return GetTLSConnection(cfg, catalogURL)
 	}
 	return GetNonTLSConnection(cfg, catalogURL)
-	return grpc.Dial(catalogURL, grpc.WithInsecure())
 
 }
 
