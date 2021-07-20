@@ -16,8 +16,10 @@
 package connection
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/napptive/nerrors/pkg/nerrors"
+	"google.golang.org/grpc/credentials"
 	"strings"
 
 	"github.com/napptive/catalog-cli/pkg/config"
@@ -32,20 +34,35 @@ func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) 
 	if err != nil {
 		return nil, err
 	}
-	return grpc.Dial(catalogURL, grpc.WithInsecure())
+	if cfg.UseTLS {
+		return GetTLSConnection(cfg, catalogURL)
+	}
+	return GetNonTLSConnection(cfg, catalogURL)
 
 }
 
+// GetTLSConnection returns a TLS wrapped connection with the playground server.
+func GetTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.ClientConn, error) {
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: cfg.SkipCertValidation,
+	}
+	tlsCredentials := credentials.NewTLS(tlsConfig)
+	return grpc.Dial(address, grpc.WithTransportCredentials(tlsCredentials))
+}
 
 // GetConnection creates a connection with a gRPC server.
 func GetConnection(cfg *config.ConnectionConfig) (*grpc.ClientConn, error) {
-	return GetNonTLSConnection(cfg)
+	addr := cfg.GetEffectiveAddress()
+	if cfg.UseTLS {
+		return GetTLSConnection(cfg, addr)
+	}
+	return GetNonTLSConnection(cfg, addr)
 }
 
 // GetNonTLSConnection returns a plain connection with the playground server.
-func GetNonTLSConnection(cfg *config.ConnectionConfig) (*grpc.ClientConn, error) {
+func GetNonTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.ClientConn, error) {
 	log.Debug().Msg("using insecure connection with the Catalog-Manager")
-	return grpc.Dial(fmt.Sprintf("%s:%d", cfg.CatalogAddress, cfg.CatalogPort), grpc.WithInsecure())
+	return grpc.Dial(address, grpc.WithInsecure())
 }
 
 

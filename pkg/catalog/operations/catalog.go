@@ -274,7 +274,12 @@ func (c *Catalog) List(targetNamespace string) error {
 	response, err := client.List(ctx, &grpc_catalog_go.ListApplicationsRequest{
 		Namespace: targetNamespace,
 	})
-	PrintResultOrError(c.ResultPrinter, response, err)
+	if err != nil {
+		PrintResultOrError(c.ResultPrinter, nil, nerrors.FromGRPC(err))
+	}else{
+		PrintResultOrError(c.ResultPrinter, response, nil)
+	}
+
 	return nil
 }
 
