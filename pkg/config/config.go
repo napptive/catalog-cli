@@ -17,6 +17,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/rs/zerolog/log"
 )
 
@@ -48,4 +49,9 @@ func (c *Config) Print() {
 	log.Info().Bool("debug", c.Debug).Str("printer", c.PrinterType).Msg("internal configuration")
 
 	c.ConnectionConfig.Print()
+}
+
+// GetEffectiveAddress returns an address:port string.
+func (cc *ConnectionConfig) GetEffectiveAddress() string {
+	return fmt.Sprintf("%s:%d", cc.CatalogAddress, cc.CatalogPort)
 }

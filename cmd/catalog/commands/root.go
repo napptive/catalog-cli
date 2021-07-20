@@ -67,6 +67,9 @@ func init() {
 	rootCmd.PersistentFlags().IntVar(&cfg.CatalogPort, "catalogPort", 7060, "Catalog-manager port")
 	rootCmd.PersistentFlags().BoolVar(&cfg.AuthEnable, "authEnable", true, "JWT authentication enable")
 
+	rootCmd.PersistentFlags().BoolVar(&cfg.SkipCertValidation, "skipCertValidation", false, "enables ignoring the validation step of the certificate presented by the server")
+	rootCmd.PersistentFlags().BoolVar(&cfg.UseTLS, "useTLS", true, "TLS connection is expected with the Catalog manager")
+
 }
 
 // Execute the user command

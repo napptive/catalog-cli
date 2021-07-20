@@ -26,7 +26,10 @@ type ConnectionConfig struct {
 	CatalogPort int
 	// AuthEnable with a flag to indicate if the authentication is enabled or not
 	AuthEnable bool
-
+	// UseTLS indicates that a TLS connection is expected with the Catalog Manager.
+	UseTLS bool
+	// SkipCertValidation flag that enables ignoring the validation step of the certificate presented by the server.
+	SkipCertValidation bool
 }
 
 // IsValid checks if the configuration options are valid.
@@ -43,5 +46,5 @@ func (cc *ConnectionConfig) IsValid() error {
 
 // Print the configuration using the application logger.
 func (cc *ConnectionConfig) Print() {
-	log.Info().Str("server", cc.CatalogAddress).Int("Port", cc.CatalogPort).Msg("Connection options")
+	log.Info().Str("server", cc.CatalogAddress).Int("Port", cc.CatalogPort).Bool("useTLS", cc.UseTLS).Bool("skipCertValidation", cc.SkipCertValidation).Msg("Connection options")
 }
