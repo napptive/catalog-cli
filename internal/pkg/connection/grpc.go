@@ -66,7 +66,7 @@ func GetNonTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.Cl
 }
 
 
-// GetURL returns CatalgURL from [catalogURL/]repoName/applicationName[:version]
+// GetURL returns CatalogURL from [catalogURL/]repoName/applicationName[:version]
 func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 
 	names := strings.Split(appName, "/")
@@ -76,7 +76,12 @@ func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 	}
 
 	if len(names) == 3 {
-		return names[0], nil
+		// Check if the URL has the port, if not -> append cfg.CatalogPort to the URL
+		url := names[0]
+		if strings.Index(url, ":") == -1 {
+			url = fmt.Sprintf("%s:%d", url, cfg.CatalogPort)
+		}
+		return url, nil
 	}
 	// if len == 2 -> no url informed, default
 	return fmt.Sprintf("%s:%d", cfg.CatalogAddress, cfg.CatalogPort), nil
