@@ -28,7 +28,7 @@ import (
 )
 
 // GetConnectionToCatalog creates
-func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) (*grpc.ClientConn, error){
+func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) (*grpc.ClientConn, error) {
 	// Get CatalogURl from ApplicationID (this method validates the applicationID format too)
 	catalogURL, err := GetURL(cfg, applicationID)
 	if err != nil {
@@ -65,7 +65,6 @@ func GetNonTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.Cl
 	return grpc.Dial(address, grpc.WithInsecure())
 }
 
-
 // GetURL returns CatalogURL from [catalogURL/]repoName/applicationName[:version]
 func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 
@@ -78,7 +77,7 @@ func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 	if len(names) == 3 {
 		// Check if the URL has the port, if not -> append cfg.CatalogPort to the URL
 		url := names[0]
-		if strings.Index(url, ":") == -1 {
+		if strings.Contains(url, ":") {
 			url = fmt.Sprintf("%s:%d", url, cfg.CatalogPort)
 		}
 		return url, nil
