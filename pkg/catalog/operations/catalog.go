@@ -258,7 +258,8 @@ func (c *Catalog) Info(application string) error {
 // List returns the applications
 func (c *Catalog) List(targetNamespace string) error {
 	// Connection
-	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	// adds an empty applicationName to the targetNamespace to use GetConnectionToCatalog method
+	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, fmt.Sprintf("%s/", targetNamespace))
 	if err != nil {
 		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))

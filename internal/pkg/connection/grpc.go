@@ -77,7 +77,7 @@ func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 	if len(names) == 3 {
 		// Check if the URL has the port, if not -> append cfg.CatalogPort to the URL
 		url := names[0]
-		if strings.Contains(url, ":") {
+		if ! strings.Contains(url, ":") {
 			url = fmt.Sprintf("%s:%d", url, cfg.CatalogPort)
 		}
 		return url, nil
