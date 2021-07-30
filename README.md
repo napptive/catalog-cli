@@ -71,13 +71,6 @@ brew install gnu-sed
 ```
 ---
 
-## Integration with Code Climate
-
-This template is integrated with the Code Climate service.
-
-[![Maintainability](https://api.codeclimate.com/v1/badges/d426ab46dd6c71fcb93b/maintainability)](https://codeclimate.com/repos/5f8e9d4ccdd59e0541004d1a/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/d426ab46dd6c71fcb93b/test_coverage)](https://codeclimate.com/repos/5f8e9d4ccdd59e0541004d1a/test_coverage)
-
-
 ## Integration with Github Actions
 
 This template is integrated with GitHub Actions. You need to add the secret `CodeClimateRerporterID` in the repository settings.
