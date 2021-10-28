@@ -17,10 +17,13 @@ package connection
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
 	"fmt"
+	"strings"
+
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"google.golang.org/grpc/credentials"
-	"strings"
 
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog/log"
@@ -45,6 +48,18 @@ func GetConnectionToCatalog(cfg *config.ConnectionConfig, applicationID string) 
 func GetTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.ClientConn, error) {
 	tlsConfig := &tls.Config{
 		InsecureSkipVerify: cfg.SkipCertValidation,
+	}
+	if cfg.ClientCA != "" {
+		cp := x509.NewCertPool()
+		decoded, err := base64.StdEncoding.DecodeString(cfg.ClientCA)
+		if err != nil {
+			return nil, nerrors.NewInternalErrorFrom(err, "error decoding CA")
+		}
+		if !cp.AppendCertsFromPEM(decoded) {
+			return nil, nerrors.NewInternalError("Error appending CA")
+		}
+		// add the CA as valid one
+		tlsConfig.RootCAs = cp
 	}
 	tlsCredentials := credentials.NewTLS(tlsConfig)
 	return grpc.Dial(address, grpc.WithTransportCredentials(tlsCredentials))
@@ -77,7 +92,7 @@ func GetURL(cfg *config.ConnectionConfig, appName string) (string, error) {
 	if len(names) == 3 {
 		// Check if the URL has the port, if not -> append cfg.CatalogPort to the URL
 		url := names[0]
-		if ! strings.Contains(url, ":") {
+		if !strings.Contains(url, ":") {
 			url = fmt.Sprintf("%s:%d", url, cfg.CatalogPort)
 		}
 		return url, nil

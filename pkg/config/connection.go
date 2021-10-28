@@ -30,6 +30,8 @@ type ConnectionConfig struct {
 	UseTLS bool
 	// SkipCertValidation flag that enables ignoring the validation step of the certificate presented by the server.
 	SkipCertValidation bool
+	// ClientCA with a client trusted CA
+	ClientCA string
 }
 
 // IsValid checks if the configuration options are valid.
