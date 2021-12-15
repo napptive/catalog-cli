@@ -24,6 +24,7 @@ import (
 
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog/log"
@@ -77,7 +78,7 @@ func GetConnection(cfg *config.ConnectionConfig) (*grpc.ClientConn, error) {
 // GetNonTLSConnection returns a plain connection with the playground server.
 func GetNonTLSConnection(cfg *config.ConnectionConfig, address string) (*grpc.ClientConn, error) {
 	log.Debug().Msg("using insecure connection with the Catalog-Manager")
-	return grpc.Dial(address, grpc.WithInsecure())
+	return grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 }
 
 // GetURL returns CatalogURL from [catalogURL/]repoName/applicationName[:version]
