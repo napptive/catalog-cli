@@ -151,8 +151,3 @@ func crashOnError(err error) {
 		os.Exit(1)
 	}
 }
-
-func crashWithHelp(cmd *cobra.Command) {
-	_ = cmd.Help()
-	os.Exit(1)
-}
