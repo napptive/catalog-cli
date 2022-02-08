@@ -39,3 +39,7 @@ func (jp *JSONPrinter) Print(result interface{}) error {
 	return err
 }
 
+// PrintResultOrError prints the result using a given printer or the error.
+func (jp *JSONPrinter) PrintResultOrError(result interface{}, err error) error {
+	return PrintResultOrError(jp, result, err)
+}

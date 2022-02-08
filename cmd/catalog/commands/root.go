@@ -21,6 +21,8 @@ import (
 	"os"
 	"os/user"
 
+	"github.com/napptive/catalog-cli/internal/pkg/printer"
+
 	"github.com/napptive/catalog-cli/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -63,7 +65,7 @@ func init() {
 	// noPrinter allowed yet, but this value is only for internal use
 	rootCmd.PersistentFlags().StringVar(&cfg.PrinterType, "output", "table", "Output format in which the results will be returned: json or table")
 
-	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog-manager", "Catalog-manager host")
+	rootCmd.PersistentFlags().StringVar(&cfg.CatalogAddress, "catalogAddress", "catalog.playground.napptive.dev", "Catalog-manager host")
 	rootCmd.PersistentFlags().IntVar(&cfg.CatalogPort, "catalogPort", 7060, "Catalog-manager port")
 	rootCmd.PersistentFlags().BoolVar(&cfg.AuthEnable, "authEnable", true, "JWT authentication enable")
 
@@ -140,4 +142,17 @@ func readConfiguration() {
 		log.Fatal().Err(err).Msg("unable to unmarshal resolved token into config structure. Check structure/file structure for a mismatch")
 	}
 
+}
+
+// crashOnError prints the error if found and returns a non-zero value as the result of the playground CLI execution.
+func crashOnError(err error) {
+	if err != nil {
+		printer.PrintError(err)
+		os.Exit(1)
+	}
+}
+
+func crashWithHelp(cmd *cobra.Command) {
+	_ = cmd.Help()
+	os.Exit(1)
 }

@@ -23,13 +23,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/napptive/catalog-cli/internal/pkg/printer"
 	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"github.com/napptive/nerrors/pkg/nerrors"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
-
+/*
 // PrintResultOrError prints the result using a given printer or the error.
 func PrintResultOrError(printer printer.ResultPrinter, result interface{}, err error) {
 	if err != nil {
@@ -48,6 +46,8 @@ func PrintResultOrError(printer printer.ResultPrinter, result interface{}, err e
 		}
 	}
 }
+*/
+
 
 func SaveFile (resultFile string, file *grpc_catalog_go.FileInfo) error {
 	// Create output file

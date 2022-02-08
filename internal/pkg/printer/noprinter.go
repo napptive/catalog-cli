@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2021 Napptive
  *
@@ -29,4 +28,9 @@ func NewNoPrinter() (ResultPrinter, error) {
 // Print the result (empty result)
 func (jp *NoPrinter) Print(result interface{}) error {
 	return nil
+}
+
+// PrintResultOrError prints the result using a given printer or the error.
+func (jp *NoPrinter) PrintResultOrError(result interface{}, err error) error {
+	return err
 }
