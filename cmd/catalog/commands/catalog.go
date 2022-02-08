@@ -30,12 +30,10 @@ var pushCmd = &cobra.Command{
 	Long:  catalogPushCmdLongHelp,
 	Short: catalogPushCmdShortHelp,
 	Args:  cobra.ExactArgs(2),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
-		return catalog.Push(args[0], args[1])
+		crashOnError(err)
+		crashOnError(catalog.Push(args[0], args[1]))
 	},
 }
 
@@ -48,12 +46,10 @@ var pullCmd = &cobra.Command{
 	Long:  catalogPullCmdLongHelp,
 	Short: catalogPullCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
-		return catalog.Pull(args[0])
+		crashOnError(err)
+		crashOnError(catalog.Pull(args[0]))
 	},
 }
 
@@ -66,12 +62,10 @@ var removeCmd = &cobra.Command{
 	Long:  catalogRemoveCmdLongHelp,
 	Short: catalogRemoveCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
-		return catalog.Remove(args[0])
+		crashOnError(err)
+		crashOnError(catalog.Remove(args[0]))
 	},
 }
 
@@ -84,12 +78,10 @@ var infoCmd = &cobra.Command{
 	Long:  catalogInfoCmdLongHelp,
 	Short: catalogInfoCmdShortHelp,
 	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
-		return catalog.Info(args[0])
+		crashOnError(err)
+		crashOnError(catalog.Info(args[0]))
 	},
 }
 
@@ -102,16 +94,14 @@ var listCmd = &cobra.Command{
 	Long:  catalogListCmdLongHelp,
 	Short: catalogListCmdShortHelp,
 	Args:  cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
+		crashOnError(err)
 		targetNamespace := ""
 		if len(args) == 1 {
 			targetNamespace = args[0]
 		}
-		return catalog.List(targetNamespace)
+		crashOnError(catalog.List(targetNamespace))
 	},
 }
 
@@ -125,12 +115,10 @@ var summaryCmd = &cobra.Command{
 	Short:   catalogSummaryCmdShortHelp,
 	Aliases: []string{"sum"},
 	Args:    cobra.MaximumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
-		if err != nil {
-			return err
-		}
-		return catalog.Summary()
+		crashOnError(err)
+		crashOnError(catalog.Summary())
 	},
 }
 

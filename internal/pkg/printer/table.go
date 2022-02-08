@@ -84,3 +84,8 @@ func (tp *TablePrinter) Print(result interface{}) error {
 	w.Flush()
 	return nil
 }
+
+// PrintResultOrError prints the result using a given printer or the error.
+func (tp *TablePrinter) PrintResultOrError(result interface{}, err error) error {
+	return PrintResultOrError(tp, result, err)
+}

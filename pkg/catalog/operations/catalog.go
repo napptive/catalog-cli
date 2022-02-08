@@ -93,8 +93,7 @@ func (c *Catalog) Push(applicationID string, path string) error {
 	// Read the path and compose the AddCatalogRequest
 	names, err := c.loadApp(path, ".")
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
+		return c.ResultPrinter.PrintResultOrError( nil, err)
 	}
 	log.Debug().Interface("names", names).Msg("Files found")
 
@@ -102,9 +101,8 @@ func (c *Catalog) Push(applicationID string, path string) error {
 	// Read the paths and compose the AddCatalogRequest
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+		return c.ResultPrinter.PrintResultOrError( nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
-		return nil
 	}
 	defer conn.Close()
 
@@ -115,15 +113,13 @@ func (c *Catalog) Push(applicationID string, path string) error {
 	// Get response and print result
 	stream, err := client.Add(ctx)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
+		return c.ResultPrinter.PrintResultOrError( nil, err)
 	}
 	for _, fileName := range names {
 		readPath := fmt.Sprintf("%s/%s", path, fileName)
 		data, err := ioutil.ReadFile(readPath)
 		if err != nil {
-			PrintResultOrError(c.ResultPrinter, nil, err)
-			return nil
+			return c.ResultPrinter.PrintResultOrError( nil, err)
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
 			ApplicationId: applicationID,
@@ -132,20 +128,17 @@ func (c *Catalog) Push(applicationID string, path string) error {
 				Data: data,
 			},
 		}); err != nil {
-			PrintResultOrError(c.ResultPrinter, nil, err)
-			return nil
+			return c.ResultPrinter.PrintResultOrError( nil, err)
 		}
 	}
 
 	reply, err := stream.CloseAndRecv()
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
-	} else {
-		PrintResultOrError(c.ResultPrinter, reply, nil)
+		return c.ResultPrinter.PrintResultOrError( nil, err)
 	}
 	log.Debug().Interface("reply", reply).Msg("Application sent")
-	return nil
+
+	return c.ResultPrinter.PrintResultOrError( reply, nil)
 }
 
 // Pull downloads application files
@@ -154,8 +147,7 @@ func (c *Catalog) Pull(applicationID string) error {
 	// Connection
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
+		return c.ResultPrinter.PrintResultOrError(nil, err)
 	}
 	defer conn.Close()
 
@@ -169,8 +161,7 @@ func (c *Catalog) Pull(applicationID string) error {
 		ApplicationId: applicationID, Compressed: true,
 	})
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
+		return c.ResultPrinter.PrintResultOrError(nil, err)
 	}
 
 	// Receive data
@@ -182,8 +173,7 @@ func (c *Catalog) Pull(applicationID string) error {
 			break
 		}
 		if err != nil {
-			PrintResultOrError(c.ResultPrinter, nil, err)
-			return nil
+			return c.ResultPrinter.PrintResultOrError(nil, err)
 		}
 		files = append(files, fileReceived)
 	}
@@ -198,16 +188,14 @@ func (c *Catalog) Pull(applicationID string) error {
 	// Save the files in a tgz file
 	err = SaveFile(appName, files[0])
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, err)
-		return nil
+		return c.ResultPrinter.PrintResultOrError(nil, err)
 	}
-	PrintResultOrError(c.ResultPrinter, &grpc_catalog_common_go.OpResponse{
+	return c.ResultPrinter.PrintResultOrError( &grpc_catalog_common_go.OpResponse{
 		Status:     grpc_catalog_common_go.OpStatus_SUCCESS,
 		StatusName: grpc_catalog_common_go.OpStatus_SUCCESS.String(),
 		UserInfo:   fmt.Sprintf("application saved on %s", files[0].Path),
 	}, nil)
 
-	return nil
 }
 
 // Remove deletes an application from catalog repository
@@ -216,9 +204,8 @@ func (c *Catalog) Remove(applicationID string) error {
 	// Connection
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
-		return nil
 	}
 	defer conn.Close()
 
@@ -229,8 +216,7 @@ func (c *Catalog) Remove(applicationID string) error {
 
 	// Call Delete op
 	response, err := client.Remove(ctx, &grpc_catalog_go.RemoveApplicationRequest{ApplicationId: applicationID})
-	PrintResultOrError(c.ResultPrinter, response, err)
-	return nil
+	return c.ResultPrinter.PrintResultOrError( response, err)
 }
 
 // Info gets application information
@@ -238,9 +224,8 @@ func (c *Catalog) Info(application string) error {
 	// Connection
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, application)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+		return c.ResultPrinter.PrintResultOrError( nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
-		return nil
 	}
 	defer conn.Close()
 
@@ -251,8 +236,7 @@ func (c *Catalog) Info(application string) error {
 
 	// Call Delete op
 	response, err := client.Info(ctx, &grpc_catalog_go.InfoApplicationRequest{ApplicationId: application})
-	PrintResultOrError(c.ResultPrinter, response, err)
-	return nil
+	return c.ResultPrinter.PrintResultOrError( response, err)
 }
 
 // List returns the applications
@@ -261,9 +245,8 @@ func (c *Catalog) List(targetNamespace string) error {
 	// adds an empty applicationName to the targetNamespace to use GetConnectionToCatalog method
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, fmt.Sprintf("%s/", targetNamespace))
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+		return c.ResultPrinter.PrintResultOrError( nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
-		return nil
 	}
 	defer conn.Close()
 
@@ -276,21 +259,17 @@ func (c *Catalog) List(targetNamespace string) error {
 		Namespace: targetNamespace,
 	})
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.FromGRPC(err))
-	}else{
-		PrintResultOrError(c.ResultPrinter, response, nil)
+		return c.ResultPrinter.PrintResultOrError( nil, nerrors.FromGRPC(err))
 	}
-
-	return nil
+	return c.ResultPrinter.PrintResultOrError( response, nil)
 }
 
 func (c *Catalog) Summary() error {
 	// Connection
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
-		PrintResultOrError(c.ResultPrinter, nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
 			c.cfg.CatalogAddress, c.cfg.CatalogPort))
-		return nil
 	}
 	defer conn.Close()
 
@@ -301,7 +280,6 @@ func (c *Catalog) Summary() error {
 
 	// Get Summary
 	summary, err := client.Summary(ctx, &grpc_catalog_common_go.EmptyRequest{})
-	PrintResultOrError(c.ResultPrinter, summary, err)
 
-	return nil
+	return c.ResultPrinter.PrintResultOrError( summary, err)
 }
