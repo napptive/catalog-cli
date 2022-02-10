@@ -16,7 +16,7 @@
 package main
 
 import (
-	"github.com/napptive/catalog-cli/cmd/catalog/commands"
+	"github.com/napptive/catalog-cli/v2/cmd/catalog/commands"
 )
 
 // Version of the command

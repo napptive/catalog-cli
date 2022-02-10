@@ -1,4 +1,4 @@
-module github.com/napptive/catalog-cli
+module github.com/napptive/catalog-cli/v2
 
 go 1.16
 
