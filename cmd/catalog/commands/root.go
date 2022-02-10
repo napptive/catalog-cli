@@ -21,9 +21,9 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/napptive/catalog-cli/internal/pkg/printer"
+	"github.com/napptive/catalog-cli/v2/internal/pkg/printer"
 
-	"github.com/napptive/catalog-cli/pkg/config"
+	"github.com/napptive/catalog-cli/v2/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
