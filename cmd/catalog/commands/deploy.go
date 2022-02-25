@@ -40,3 +40,7 @@ var deployCmd = &cobra.Command{
 		crashOnError(catalog.Push(args[0], args[1]))
 	},
 }
+
+func init() {
+	rootCmd.AddCommand(deployCmd)
+}
