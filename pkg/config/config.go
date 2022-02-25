@@ -18,6 +18,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -25,10 +26,10 @@ import (
 type Config struct {
 	ConnectionConfig
 	TokenConfig
-	Version string
-	Commit  string
-	Debug   bool
-
+	Version                    string
+	Commit                     string
+	Debug                      bool
+	UsePlaygroundConfiguration bool
 	// PrinterType defines how results are to be shown.
 	PrinterType string
 }

@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/user"
 
+	"github.com/napptive/catalog-cli/v2/internal/pkg/cliconfig"
 	"github.com/napptive/catalog-cli/v2/internal/pkg/printer"
 
 	"github.com/napptive/catalog-cli/v2/pkg/config"
@@ -28,6 +29,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+const (
+	// DefaultConfigurationName with the name of the directory in which the playground stores
+	// token information by default.
+	DefaultConfigurationName = "default"
 )
 
 var cfg config.Config
@@ -71,7 +78,7 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVar(&cfg.SkipCertValidation, "skipCertValidation", false, "enables ignoring the validation step of the certificate presented by the server")
 	rootCmd.PersistentFlags().BoolVar(&cfg.UseTLS, "useTLS", true, "TLS connection is expected with the Catalog manager")
-
+	rootCmd.PersistentFlags().BoolVar(&cfg.UsePlaygroundConfiguration, "usePlaygroundConfiguration", true, "Set to false to avoid reading the .playground.yaml file")
 }
 
 // Execute the user command
@@ -113,8 +120,46 @@ func getConfigLocations() []string {
 	if err != nil {
 		log.Fatal().Err(err).Msg("unable to determine user home")
 	}
-	result = append(result, fmt.Sprintf("%s/.napptive", usr.HomeDir))
+	targetInstallation := getSelectedPlaygroundInstallation(usr.HomeDir)
+	result = append(result, fmt.Sprintf("%s/.napptive/%s", usr.HomeDir, targetInstallation))
 	return result
+}
+
+// getSelectedPlaygroundInstallation determines the selected installation that is being targeted by
+// the playground command.
+func getSelectedPlaygroundInstallation(userDir string) string {
+	if !cfg.UsePlaygroundConfiguration {
+		return ""
+	}
+	playgroundConfigHelper := viper.New()
+	playgroundConfigHelper.SetConfigName(".playground")
+	playgroundConfigHelper.SetConfigType("yaml")
+	playgroundConfigHelper.AddConfigPath(fmt.Sprintf("%s/.napptive/", userDir))
+
+	if err := playgroundConfigHelper.ReadInConfig(); err != nil {
+		log.Debug().Err(err).Msg("unable to read playground configuration file, using default configuration")
+		return DefaultConfigurationName
+	} else {
+		log.Debug().Str("path", playgroundConfigHelper.ConfigFileUsed()).Msg("playground configuration loaded")
+	}
+
+	var playgroundConfig cliconfig.PlaygroundConfig
+
+	// Unmarshal resulting values in the CLI configuration.
+	if err := playgroundConfigHelper.Unmarshal(&playgroundConfig); err != nil {
+		log.Fatal().Err(err).Msg("unable to unmarshal resolved configuration into config structure. Check structure/file structure for a mismatch")
+	}
+
+	// if there is a selected configuration, overwrite the target catalog
+	if inst := playgroundConfig.GetSelectedConnectionConfig(); inst != nil {
+		cfg.CatalogAddress = inst.CatalogAddress
+		cfg.CatalogPort = inst.CatalogPort
+		cfg.UseTLS = inst.UseTLS
+		cfg.ClientCA = inst.ClientCA
+		cfg.SkipCertValidation = inst.SkipCertValidation
+	}
+
+	return playgroundConfigHelper.GetString("CurrentInstallation")
 }
 
 func readConfiguration() {
