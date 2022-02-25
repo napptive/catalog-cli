@@ -17,8 +17,11 @@
 package operations
 
 import (
+	"github.com/napptive/catalog-cli/v2/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/v2/internal/pkg/printer"
 	"github.com/napptive/catalog-cli/v2/pkg/config"
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
+	"github.com/napptive/nerrors/pkg/nerrors"
 )
 
 type Deploy struct {
@@ -41,4 +44,26 @@ func NewDeploy(cfg *config.Config) (*Deploy, error) {
 		cfg:           cfg,
 		ResultPrinter: printer,
 	}, nil
+}
+
+// Deploy triggers the deployment of the application in the selected environment.
+func (d *Deploy) Deploy(applicationID string, targetEnvQualifiedName string, targetPlaygroundAPI string) error {
+	// Connection
+	conn, err := connection.GetConnection(&d.cfg.ConnectionConfig)
+	if err != nil {
+		return d.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			d.cfg.CatalogAddress, d.cfg.CatalogPort))
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewApplicationsClient(conn)
+	ctx, cancel := d.AuthToken.GetContext()
+	defer cancel()
+	response, err := client.Deploy(ctx, &grpc_catalog_go.DeployApplicationRequest{
+		ApplicationId:                  applicationID,
+		TargetEnvironmentQualifiedName: targetEnvQualifiedName,
+		TargetPlaygroundApiUrl:         targetPlaygroundAPI,
+	})
+	return d.ResultPrinter.PrintResultOrError(response, err)
 }

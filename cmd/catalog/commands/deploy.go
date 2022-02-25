@@ -33,11 +33,11 @@ var deployCmd = &cobra.Command{
 	Use:   "deploy <[catalog/]namespace/appName[:tag]> <account>/<environment> <target_playground>",
 	Long:  deployCmdLongHelp,
 	Short: deployCmdShortHelp,
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
-		catalog, err := operations.NewCatalog(&cfg)
+		op, err := operations.NewDeploy(&cfg)
 		crashOnError(err)
-		crashOnError(catalog.Push(args[0], args[1]))
+		crashOnError(op.Deploy(args[0], args[1], args[2]))
 	},
 }
 
