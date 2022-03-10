@@ -29,7 +29,7 @@ const AuthorizationHeader = "authorization"
 const AgentHeader = "agent"
 
 // AgentValue with the value for the agent payload.
-const AgentValue = "catalog"
+const AgentValue = "catalog-cli"
 
 // VersionHeader with the key name for the version payload.
 const VersionHeader = "version"
@@ -43,6 +43,10 @@ type TokenConfig struct {
 	Token string
 	// RefreshToken contains a JWT that can be used to renew the active JWT.
 	Refresh string
+}
+
+func (tk *TokenConfig) LoadFromDisk() error {
+	return nil
 }
 
 // AuthToken with a struct to manage and send the token in the context metadata
