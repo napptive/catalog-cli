@@ -94,7 +94,7 @@ func (tp *TablePrinter) PrintResultOrError(result interface{}, err error) error 
 func (tp *TablePrinter) PrintResultOrErrorWithExtendedHeader(result interface{}, opEnv string, err error) error {
 
 	if err == nil && opEnv != "" {
-		fmt.Println(fmt.Sprintf("Operating environment: %s", opEnv))
+		fmt.Printf("Operating environment: %s\n", opEnv)
 	}
 	return PrintResultOrError(tp, result, err)
 }
