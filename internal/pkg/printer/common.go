@@ -18,6 +18,7 @@ package printer
 
 import (
 	"fmt"
+
 	"github.com/napptive/nerrors/pkg/nerrors"
 	"github.com/rs/zerolog"
 )
@@ -29,6 +30,9 @@ type ResultPrinter interface {
 	Print(result interface{}) error
 	// PrintResultOrError prints the result using a given printer or the error.
 	PrintResultOrError(result interface{}, err error) error
+	// PrintResultOrErrorWithExtendedHeader prints the result indicating the environment where the user is logged
+	// and the environment where the user is operating
+	PrintResultOrErrorWithExtendedHeader(result interface{}, opEnv string, err error) error
 }
 
 // GetPrinter creates a ResultPrinter attending to the user preferences.

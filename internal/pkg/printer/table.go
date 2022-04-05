@@ -18,10 +18,11 @@ package printer
 
 import (
 	"fmt"
-	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 	"os"
 	"text/tabwriter"
 	"text/template"
+
+	grpc_catalog_go "github.com/napptive/grpc-catalog-go"
 
 	"github.com/napptive/nerrors/pkg/nerrors"
 )
@@ -87,5 +88,13 @@ func (tp *TablePrinter) Print(result interface{}) error {
 
 // PrintResultOrError prints the result using a given printer or the error.
 func (tp *TablePrinter) PrintResultOrError(result interface{}, err error) error {
+	return PrintResultOrError(tp, result, err)
+}
+
+func (tp *TablePrinter) PrintResultOrErrorWithExtendedHeader(result interface{}, opEnv string, err error) error {
+
+	if err == nil && opEnv != "" {
+		fmt.Println(fmt.Sprintf("Operation environment: %s", opEnv))
+	}
 	return PrintResultOrError(tp, result, err)
 }

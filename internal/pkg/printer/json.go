@@ -43,3 +43,7 @@ func (jp *JSONPrinter) Print(result interface{}) error {
 func (jp *JSONPrinter) PrintResultOrError(result interface{}, err error) error {
 	return PrintResultOrError(jp, result, err)
 }
+
+func (jp *JSONPrinter) PrintResultOrErrorWithExtendedHeader(result interface{}, opEnv string, err error) error {
+	return PrintResultOrError(jp, result, err)
+}

@@ -34,3 +34,7 @@ func (jp *NoPrinter) Print(result interface{}) error {
 func (jp *NoPrinter) PrintResultOrError(result interface{}, err error) error {
 	return err
 }
+
+func (jp *NoPrinter) PrintResultOrErrorWithExtendedHeader(result interface{}, opEnv string, err error) error {
+	return err
+}

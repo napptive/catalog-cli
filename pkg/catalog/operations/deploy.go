@@ -65,5 +65,5 @@ func (d *Deploy) Deploy(applicationID string, targetEnvQualifiedName string, tar
 		TargetEnvironmentQualifiedName: targetEnvQualifiedName,
 		TargetPlaygroundApiUrl:         targetPlaygroundAPI,
 	})
-	return d.ResultPrinter.PrintResultOrError(response, err)
+	return d.ResultPrinter.PrintResultOrErrorWithExtendedHeader(response, targetEnvQualifiedName, err)
 }
