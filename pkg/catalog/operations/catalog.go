@@ -18,7 +18,6 @@ package operations
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/napptive/catalog-cli/v2/internal/pkg/connection"
@@ -87,7 +86,7 @@ func (c *Catalog) loadApp(path string, relativePath string) ([]string, error) {
 }
 
 // Push adds a new application to catalog
-func (c *Catalog) Push(applicationID string, path string) error {
+func (c *Catalog) Push(applicationID string, path string, privateApp bool) error {
 	log.Debug().Str("applicationID", applicationID).Str("path", path).Msg("Push received!")
 
 	// Read the path and compose the AddCatalogRequest
@@ -117,12 +116,13 @@ func (c *Catalog) Push(applicationID string, path string) error {
 	}
 	for _, fileName := range names {
 		readPath := fmt.Sprintf("%s/%s", path, fileName)
-		data, err := ioutil.ReadFile(readPath)
+		data, err := os.ReadFile(readPath)
 		if err != nil {
 			return c.ResultPrinter.PrintResultOrError(nil, err)
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
 			ApplicationId: applicationID,
+			Private:       privateApp,
 			File: &grpc_catalog_go.FileInfo{
 				Path: fileName,
 				Data: data,

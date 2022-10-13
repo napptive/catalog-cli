@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var privateApp bool
+
 var catalogPushCmdLongHelp = `Push an application in the catalog. \
 The application should be named: [catalog/]namespace/appName[:tag] `
 
@@ -33,7 +35,7 @@ var pushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
 		crashOnError(err)
-		crashOnError(catalog.Push(args[0], args[1]))
+		crashOnError(catalog.Push(args[0], args[1], privateApp))
 	},
 }
 
@@ -123,6 +125,9 @@ var summaryCmd = &cobra.Command{
 }
 
 func init() {
+
+	pushCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application is private")
+
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
