@@ -124,15 +124,32 @@ var summaryCmd = &cobra.Command{
 	},
 }
 
+var catalogChangeVisibilityCmdLongHelp = `Update application visibility`
+
+var catalogChangeVisibilityCmdShortHelp = `Update application visibility`
+
+var catalogChangeVisibilityCmd = &cobra.Command{
+	Use:   "update",
+	Long:  catalogChangeVisibilityCmdLongHelp,
+	Short: catalogChangeVisibilityCmdShortHelp,
+	Args:  cobra.MaximumNArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		catalog, err := operations.NewCatalog(&cfg)
+		crashOnError(err)
+		crashOnError(catalog.ChangeVisibilty(args[0], args[1], privateApp))
+	},
+}
+
 func init() {
 
 	pushCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application is private")
+	catalogChangeVisibilityCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application becomes private")
 
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(infoCmd)
 	rootCmd.AddCommand(summaryCmd)
-
+	rootCmd.AddCommand(catalogChangeVisibilityCmd)
 	rootCmd.AddCommand(listCmd)
 }

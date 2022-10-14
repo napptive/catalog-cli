@@ -302,6 +302,8 @@ github.com/napptive/grpc-catalog-go v0.18.0 h1:6A+zYeSIkKcHIJS/9fmPUxS3ra+oVnXrE
 github.com/napptive/grpc-catalog-go v0.18.0/go.mod h1:BoOdDpZZlW8rWNlSe2/mjG9JC6+UCLlZkUNovwMFxY0=
 github.com/napptive/grpc-catalog-go v0.22.0 h1:ofbEQSnw5sBlJtUMb4/brE842pV/Hx3o/7WtylR5rTk=
 github.com/napptive/grpc-catalog-go v0.22.0/go.mod h1:BoOdDpZZlW8rWNlSe2/mjG9JC6+UCLlZkUNovwMFxY0=
+github.com/napptive/grpc-catalog-go v0.25.0 h1:6z6a4i+qRU5rYBZjgHWA1Td6hgU+68IlI/Qhh0R97FI=
+github.com/napptive/grpc-catalog-go v0.25.0/go.mod h1:BoOdDpZZlW8rWNlSe2/mjG9JC6+UCLlZkUNovwMFxY0=
 github.com/napptive/grpc-common-go v0.2.0 h1:ewtSAF75kEl8eYwKNOIXwNWLX8bTB7N2W1qrCPCJYV4=
 github.com/napptive/grpc-common-go v0.2.0/go.mod h1:Q896cZY+yIkted9zYw3jtguVDdfL1bqTHjjiirBTjnw=
 github.com/napptive/nerrors v1.1.0 h1:TkpfHi5CScDlzC4uKKiOj3wTJ//zW7Zx8uXukMbCHdA=

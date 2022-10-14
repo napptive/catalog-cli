@@ -283,3 +283,26 @@ func (c *Catalog) Summary() error {
 
 	return c.ResultPrinter.PrintResultOrError(summary, err)
 }
+
+func (c *Catalog) ChangeVisibilty(targetNamespace string, applicationName string, isPrivate bool) error {
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := c.AuthToken.GetContext()
+	defer cancel()
+
+	// Get Summary
+	opResponse, err := client.Update(ctx, &grpc_catalog_go.UpdateRequest{
+		Namespace:       targetNamespace,
+		ApplicationName: applicationName,
+		Private:         isPrivate,
+	})
+
+	return c.ResultPrinter.PrintResultOrError(opResponse, err)
+}
