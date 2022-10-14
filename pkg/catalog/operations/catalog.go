@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/napptive/catalog-cli/v2/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/v2/internal/pkg/printer"
@@ -284,7 +285,32 @@ func (c *Catalog) Summary() error {
 	return c.ResultPrinter.PrintResultOrError(summary, err)
 }
 
-func (c *Catalog) ChangeVisibilty(targetNamespace string, applicationName string, isPrivate bool) error {
+func (c *Catalog) splitApplicationName(applicationName string) (string, string, error) {
+	splited := strings.Split(applicationName, "/")
+	if len(splited) != 2 {
+		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName>")
+	}
+	// check if the application name has a tag
+	if strings.Contains(splited[1], ":") {
+		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName> without tag")
+	}
+
+	return splited[0], splited[1], nil
+}
+
+// ChangeVisibilty changes the visitibily of an application (for all tags)
+func (c *Catalog) ChangeVisibilty(applicationName string, isPrivate bool, isPublic bool) error {
+
+	// validate
+	if isPrivate == isPublic {
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalError("error changing visibility, choose public or private flag"))
+	}
+
+	namespace, app, err := c.splitApplicationName(applicationName)
+	if err != nil {
+		return err
+	}
+
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
 	if err != nil {
 		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
@@ -299,8 +325,8 @@ func (c *Catalog) ChangeVisibilty(targetNamespace string, applicationName string
 
 	// Get Summary
 	opResponse, err := client.Update(ctx, &grpc_catalog_go.UpdateRequest{
-		Namespace:       targetNamespace,
-		ApplicationName: applicationName,
+		Namespace:       namespace,
+		ApplicationName: app,
 		Private:         isPrivate,
 	})
 

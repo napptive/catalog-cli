@@ -21,6 +21,7 @@ import (
 )
 
 var privateApp bool
+var publicApp bool
 
 var catalogPushCmdLongHelp = `Push an application in the catalog. \
 The application should be named: [catalog/]namespace/appName[:tag] `
@@ -124,26 +125,44 @@ var summaryCmd = &cobra.Command{
 	},
 }
 
-var catalogChangeVisibilityCmdLongHelp = `Update application visibility`
+var catalogChangeVisibilityCmdLongHelp = `Update application visibility for all the application tags`
 
 var catalogChangeVisibilityCmdShortHelp = `Update application visibility`
 
+var catalogChangeVisibilityCmdExample = `
+$ change-visibility <namespace>/<applicationName> --private
+$ change-visibility <namespace>/<applicationName> --public
+`
+
 var catalogChangeVisibilityCmd = &cobra.Command{
-	Use:   "update <namespace> <applicationName> ",
-	Long:  catalogChangeVisibilityCmdLongHelp,
-	Short: catalogChangeVisibilityCmdShortHelp,
-	Args:  cobra.MaximumNArgs(2),
+	Use:     "change-visibility",
+	Long:    catalogChangeVisibilityCmdLongHelp,
+	Example: catalogChangeVisibilityCmdExample,
+	Short:   catalogChangeVisibilityCmdShortHelp,
+	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
 		crashOnError(err)
-		crashOnError(catalog.ChangeVisibilty(args[0], args[1], privateApp))
+		private := false
+		public := false
+		if cmd.Flag("private").Changed {
+			private, err = cmd.Flags().GetBool("private")
+			crashOnError(err)
+		}
+		if cmd.Flag("public").Changed {
+			public, err = cmd.Flags().GetBool("public")
+			crashOnError(err)
+		}
+		crashOnError(catalog.ChangeVisibilty(args[0], private, public))
 	},
 }
 
 func init() {
 
 	pushCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application is private")
+
 	catalogChangeVisibilityCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application becomes private")
+	catalogChangeVisibilityCmd.Flags().BoolVar(&publicApp, "public", true, "Flag to indicate if an application becomes public")
 
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
