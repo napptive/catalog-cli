@@ -18,8 +18,8 @@ package operations
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/napptive/catalog-cli/v2/internal/pkg/connection"
 	"github.com/napptive/catalog-cli/v2/internal/pkg/printer"
@@ -87,7 +87,7 @@ func (c *Catalog) loadApp(path string, relativePath string) ([]string, error) {
 }
 
 // Push adds a new application to catalog
-func (c *Catalog) Push(applicationID string, path string) error {
+func (c *Catalog) Push(applicationID string, path string, privateApp bool) error {
 	log.Debug().Str("applicationID", applicationID).Str("path", path).Msg("Push received!")
 
 	// Read the path and compose the AddCatalogRequest
@@ -117,12 +117,13 @@ func (c *Catalog) Push(applicationID string, path string) error {
 	}
 	for _, fileName := range names {
 		readPath := fmt.Sprintf("%s/%s", path, fileName)
-		data, err := ioutil.ReadFile(readPath)
+		data, err := os.ReadFile(readPath)
 		if err != nil {
 			return c.ResultPrinter.PrintResultOrError(nil, err)
 		}
 		if err := stream.Send(&grpc_catalog_go.AddApplicationRequest{
 			ApplicationId: applicationID,
+			Private:       privateApp,
 			File: &grpc_catalog_go.FileInfo{
 				Path: fileName,
 				Data: data,
@@ -282,4 +283,52 @@ func (c *Catalog) Summary() error {
 	summary, err := client.Summary(ctx, &grpc_catalog_common_go.EmptyRequest{})
 
 	return c.ResultPrinter.PrintResultOrError(summary, err)
+}
+
+func (c *Catalog) splitApplicationName(applicationName string) (string, string, error) {
+	splited := strings.Split(applicationName, "/")
+	if len(splited) != 2 {
+		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName>")
+	}
+	// check if the application name has a tag
+	if strings.Contains(splited[1], ":") {
+		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName> without tag")
+	}
+
+	return splited[0], splited[1], nil
+}
+
+// ChangeVisibilty changes the visitibily of an application (for all tags)
+func (c *Catalog) ChangeVisibilty(applicationName string, isPrivate bool, isPublic bool) error {
+
+	// validate
+	if isPrivate == isPublic {
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalError("error changing visibility, choose public or private flag"))
+	}
+
+	namespace, app, err := c.splitApplicationName(applicationName)
+	if err != nil {
+		return err
+	}
+
+	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
+	if err != nil {
+		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
+			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+	}
+	defer conn.Close()
+
+	// Client
+	client := grpc_catalog_go.NewCatalogClient(conn)
+	ctx, cancel := c.AuthToken.GetContext()
+	defer cancel()
+
+	// Get Summary
+	opResponse, err := client.Update(ctx, &grpc_catalog_go.UpdateRequest{
+		Namespace:       namespace,
+		ApplicationName: app,
+		Private:         isPrivate,
+	})
+
+	return c.ResultPrinter.PrintResultOrError(opResponse, err)
 }

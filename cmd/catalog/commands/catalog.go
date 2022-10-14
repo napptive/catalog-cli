@@ -20,6 +20,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var privateApp bool
+var publicApp bool
+
 var catalogPushCmdLongHelp = `Push an application in the catalog. \
 The application should be named: [catalog/]namespace/appName[:tag] `
 
@@ -33,7 +36,7 @@ var pushCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
 		crashOnError(err)
-		crashOnError(catalog.Push(args[0], args[1]))
+		crashOnError(catalog.Push(args[0], args[1], privateApp))
 	},
 }
 
@@ -122,12 +125,50 @@ var summaryCmd = &cobra.Command{
 	},
 }
 
+var catalogChangeVisibilityCmdLongHelp = `Update application visibility for all the application tags`
+
+var catalogChangeVisibilityCmdShortHelp = `Update application visibility`
+
+var catalogChangeVisibilityCmdExample = `
+$ change-visibility <namespace>/<applicationName> --private
+$ change-visibility <namespace>/<applicationName> --public
+`
+
+var catalogChangeVisibilityCmd = &cobra.Command{
+	Use:     "change-visibility",
+	Long:    catalogChangeVisibilityCmdLongHelp,
+	Example: catalogChangeVisibilityCmdExample,
+	Short:   catalogChangeVisibilityCmdShortHelp,
+	Args:    cobra.MaximumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		catalog, err := operations.NewCatalog(&cfg)
+		crashOnError(err)
+		private := false
+		public := false
+		if cmd.Flag("private").Changed {
+			private, err = cmd.Flags().GetBool("private")
+			crashOnError(err)
+		}
+		if cmd.Flag("public").Changed {
+			public, err = cmd.Flags().GetBool("public")
+			crashOnError(err)
+		}
+		crashOnError(catalog.ChangeVisibilty(args[0], private, public))
+	},
+}
+
 func init() {
+
+	pushCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application is private")
+
+	catalogChangeVisibilityCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application becomes private")
+	catalogChangeVisibilityCmd.Flags().BoolVar(&publicApp, "public", true, "Flag to indicate if an application becomes public")
+
 	rootCmd.AddCommand(pushCmd)
 	rootCmd.AddCommand(pullCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(infoCmd)
 	rootCmd.AddCommand(summaryCmd)
-
+	rootCmd.AddCommand(catalogChangeVisibilityCmd)
 	rootCmd.AddCommand(listCmd)
 }
