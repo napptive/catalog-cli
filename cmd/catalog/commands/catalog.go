@@ -129,7 +129,7 @@ var catalogChangeVisibilityCmdLongHelp = `Update application visibility`
 var catalogChangeVisibilityCmdShortHelp = `Update application visibility`
 
 var catalogChangeVisibilityCmd = &cobra.Command{
-	Use:   "update",
+	Use:   "update <namespace> <applicationName> ",
 	Long:  catalogChangeVisibilityCmdLongHelp,
 	Short: catalogChangeVisibilityCmdShortHelp,
 	Args:  cobra.MaximumNArgs(2),
