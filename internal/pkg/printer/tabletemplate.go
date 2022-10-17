@@ -46,7 +46,7 @@ README
 {{toString .ReadmeFile}}
 `
 
-const ApplicationListTemplate = `APPLICATION	NAME
+const ApplicationListTemplate = `APPLICATION	NAME	VISIBILITY
 {{range $other, $app := .Applications}}{{fromApplicationSummary $app}}{{end}}`
 
 const SummaryResponseTemplate = `NAMESPACES	APPLICATIONS	TAGS
