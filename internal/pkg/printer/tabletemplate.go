@@ -30,8 +30,8 @@ const OpResponseTemplate = `STATUS	INFO
 `
 
 // InfoAppResponseTemplate with the table representation of an InfoAppResponse.
-const InfoAppResponseTemplate = `APP_ID	NAME
-{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.Metadata.Name}}	
+const InfoAppResponseTemplate = `APP_ID	NAME	VISIBILITY
+{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.Metadata.Name}}	{{if .Private}}Private{{else}}Public{{end}}
 
 DESCRIPTION
 {{.Metadata.Description}}
