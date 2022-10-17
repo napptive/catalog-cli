@@ -30,8 +30,8 @@ const OpResponseTemplate = `STATUS	INFO
 `
 
 // InfoAppResponseTemplate with the table representation of an InfoAppResponse.
-const InfoAppResponseTemplate = `APP_ID	NAME	VISIBILITY
-{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{.Metadata.Name}}	{{if .Private}}Private{{else}}Public{{end}}
+const InfoAppResponseTemplate = `APP_ID	VISIBILITY	NAME
+{{.Namespace}}/{{.ApplicationName}}:{{.Tag}}	{{if .Private}}Private{{else}}Public{{end}}	{{.Metadata.Name}}
 
 DESCRIPTION
 {{.Metadata.Description}}
@@ -46,7 +46,7 @@ README
 {{toString .ReadmeFile}}
 `
 
-const ApplicationListTemplate = `APPLICATION	NAME	VISIBILITY
+const ApplicationListTemplate = `APPLICATION	VISIBILITY	NAME
 {{range $other, $app := .Applications}}{{fromApplicationSummary $app}}{{end}}`
 
 const SummaryResponseTemplate = `NAMESPACES	APPLICATIONS	TAGS

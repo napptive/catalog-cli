@@ -63,7 +63,7 @@ func (tp *TablePrinter) fromApplicationSummary(app *grpc_catalog_go.ApplicationS
 	}
 	for version, name := range app.TagMetadataName {
 
-		result += fmt.Sprintf("%s/%s:%s\t%s\t%s\n", app.Namespace, app.ApplicationName, version, name, visibility)
+		result += fmt.Sprintf("%s/%s:%s\t%s\t%s\n", app.Namespace, app.ApplicationName, version, visibility, name)
 	}
 	return result
 }
