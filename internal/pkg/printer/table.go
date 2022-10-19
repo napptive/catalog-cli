@@ -57,8 +57,13 @@ func (tp *TablePrinter) toString(content []byte) string {
 func (tp *TablePrinter) fromApplicationSummary(app *grpc_catalog_go.ApplicationSummary) string {
 
 	var result string
+	visibility := "Public"
+	if app.Private {
+		visibility = "Private"
+	}
 	for version, name := range app.TagMetadataName {
-		result += fmt.Sprintf("%s/%s:%s\t%s\n", app.Namespace, app.ApplicationName, version, name)
+
+		result += fmt.Sprintf("%s/%s:%s\t%s\t%s\n", app.Namespace, app.ApplicationName, version, visibility, name)
 	}
 	return result
 }
