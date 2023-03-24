@@ -1,11 +1,11 @@
-/**
- * Copyright 2021 Napptive
+/*
+ * Copyright 2023 Napptive
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package operations
 
 import (
@@ -55,7 +56,7 @@ func NewCatalog(cfg *config.Config) (*Catalog, error) {
 func (c *Catalog) loadApp(path string, relativePath string) ([]string, error) {
 	dir, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, nerrors.NewInvalidArgumentError("unable to open directory %s. Check that the path is correct, it is accessible by the current user, and it contains an application file", path)
 	}
 
 	defer dir.Close()
@@ -101,8 +102,7 @@ func (c *Catalog) Push(applicationID string, path string, privateApp bool) error
 	// Read the paths and compose the AddCatalogRequest
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, applicationID)
 	if err != nil {
-		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
-			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return c.ResultPrinter.PrintResultOrError(nil, err)
 	}
 	defer conn.Close()
 
