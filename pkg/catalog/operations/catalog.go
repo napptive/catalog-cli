@@ -297,8 +297,8 @@ func (c *Catalog) splitApplicationName(applicationName string) (string, string, 
 	return splited[0], splited[1], nil
 }
 
-// ChangeVisibilty changes the visitibily of an application (for all tags)
-func (c *Catalog) ChangeVisibilty(applicationName string, isPrivate bool, isPublic bool) error {
+// ChangeVisibility changes the visibility of an application (for all tags)
+func (c *Catalog) ChangeVisibility(applicationName string, isPrivate bool, isPublic bool) error {
 
 	// validate
 	if isPrivate == isPublic {

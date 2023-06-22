@@ -154,7 +154,7 @@ var catalogChangeVisibilityCmd = &cobra.Command{
 			public, err = cmd.Flags().GetBool("public")
 			crashOnError(err)
 		}
-		crashOnError(catalog.ChangeVisibilty(args[0], private, public))
+		crashOnError(catalog.ChangeVisibility(args[0], private, public))
 	},
 }
 
