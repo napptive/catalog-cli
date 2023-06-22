@@ -291,7 +291,7 @@ func (c *Catalog) splitApplicationName(applicationName string) (string, string, 
 	}
 	// check if the application name has a tag
 	if strings.Contains(splited[1], ":") {
-		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName> without tag")
+		return "", "", nerrors.NewFailedPreconditionError("Error changing visibility, the visibility affects all versions of the application so not tag is allowed. Use <namespace>/<application> instead")
 	}
 
 	return splited[0], splited[1], nil
