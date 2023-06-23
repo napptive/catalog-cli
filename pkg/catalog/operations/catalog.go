@@ -225,8 +225,7 @@ func (c *Catalog) Info(application string) error {
 	// Connection
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, application)
 	if err != nil {
-		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalErrorFrom(err, "cannot establish connection with catalog-manager server on %s:%d",
-			c.cfg.CatalogAddress, c.cfg.CatalogPort))
+		return c.ResultPrinter.PrintResultOrError(nil, err)
 	}
 	defer conn.Close()
 
@@ -285,30 +284,44 @@ func (c *Catalog) Summary() error {
 	return c.ResultPrinter.PrintResultOrError(summary, err)
 }
 
-func (c *Catalog) splitApplicationName(applicationName string) (string, string, error) {
+// splitApplicationName returns the namespace, application name and the tag (or empty in other case) if it exists
+func (c *Catalog) splitApplicationName(applicationName string) (string, string, string, error) {
 	splited := strings.Split(applicationName, "/")
+
 	if len(splited) != 2 {
-		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName>")
-	}
-	// check if the application name has a tag
-	if strings.Contains(splited[1], ":") {
-		return "", "", nerrors.NewFailedPreconditionError("error in application name: <namespace>/<applicationName> without tag")
+		return "", "", "", nerrors.NewFailedPreconditionError("error in application name")
 	}
 
-	return splited[0], splited[1], nil
+	namespace := splited[0]
+	appAndTag := strings.Split(splited[1], ":")
+
+	switch len(appAndTag) {
+	case 1:
+		// No tag in the applicationName
+		return namespace, splited[1], "", nil
+	case 2:
+		// No tag in the applicationName
+		return namespace, appAndTag[0], appAndTag[1], nil
+	default:
+		return "", "", "", nerrors.NewFailedPreconditionError("error in application name")
+	}
+
 }
 
-// ChangeVisibilty changes the visitibily of an application (for all tags)
-func (c *Catalog) ChangeVisibilty(applicationName string, isPrivate bool, isPublic bool) error {
+// ChangeVisibility changes the visibility of an application (for all tags)
+func (c *Catalog) ChangeVisibility(applicationName string, isPrivate bool, isPublic bool) error {
 
 	// validate
 	if isPrivate == isPublic {
 		return c.ResultPrinter.PrintResultOrError(nil, nerrors.NewInternalError("error changing visibility, choose public or private flag"))
 	}
 
-	namespace, app, err := c.splitApplicationName(applicationName)
+	namespace, app, tag, err := c.splitApplicationName(applicationName)
 	if err != nil {
 		return err
+	}
+	if tag != "" {
+		return nerrors.NewFailedPreconditionError("Error changing visibility, the visibility affects all versions of the application so not tag is allowed. Use <namespace>/<application> instead")
 	}
 
 	conn, err := connection.GetConnection(&c.cfg.ConnectionConfig)
