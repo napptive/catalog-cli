@@ -1,81 +1,58 @@
 # catalog-cli
-A CLI to interact with Napptive Catalog.
+A CLI to interact with [Napptive](https://napptive.com/) Catalog.
 
-This component is the entry point into Napptive catalog. 
+## Commands Documentation
 
-## Prerequisites
+The `catalog-cli` is a powerful tool that provides a range of methods for interacting with the Napptive Catalog. This documentation outlines the various commands, their usage, and available flags.
 
-- Component `catalog-manager` deployed
-
-## Commands
-
-To interact with the catalog, we offer several commands in `catalog-cli`.
- ```
- The catalog command provides a set of methods to interact with the Napptive Catalog
-
-Usage:
-  catalog [flags]
-  catalog [command]
-
-Examples:
-$ catalog
-
-Available Commands:
-  help        Help about any command
-  info        Get the principal information of an application.
-  list        List the applications
-  pull        Pull an application from catalog.
-  push        Push an application in the catalog.
-  remove      Remove an application from catalog.
-
-Flags:
-      --catalogAddress string   Catalog-manager host (default "catalog-manager")
-      --catalogPort int         Catalog-manager port (default 7060)
-      --consoleLogging          Pretty print logging
-      --debug                   Set debug level
-  -h, --help                    help for catalog
-      --output string           Output format in which the results will be returned: json or table (default "table")
-  -v, --version                 version for catalog
-
-Use "catalog [command] --help" for more information about a command.
+**Usage:**
+```bash
+catalog [flags]
+catalog [command]
+```
+_Example_ To see a list of available applications in the catalog:
+```bash
+catalog list
  ```
 
+**Available Commands:**
+1. `help`: Provides help information about any specific command.
+1. `info`: Retrieves principal information about a specific application.
+1. `list`: Lists all the applications available in the catalog.
+1. `pull`: Pulls a specific application from the catalog.
+1. `push`: Pushes an application to the catalog.
+1. `remove`: Removes an application from the catalog.
 
-## Layout structure
+**Flags:**
+1. `--catalogAddress`: Specifies the host of the Catalog Manager. (Default: "catalog-manager")
+1. `--catalogPort`: Specifies the port of the Catalog Manager. (Default: 7060)
+1. `--consoleLogging`: Enables pretty-print logging.
+1. `--debug`: Sets the debug level.
+1. `-h`, `--help`: Shows help for the `catalog` command.
+1. `--output`: Specifies the output format for results: "json" or "table". (Default: "table")
+1. `-v`, `--version`: Displays the version information for the `catalog` command.
 
-The layout structure is based on the default golang-template layout.
+**Command Usage:** 
 
-https://github.com/golang-standards/project-layout
-
-## Usage
-
-A make file is provided with the following targets:
-
-* clean: Remove build files
-* test: Run the available tests
-* build: Build the files for your local environment
-* build-darwin: Build the files for MacOS
-* build-linux: Build the files for Linux
-* k8s: Generate the Kubernetes deployment files
-* docker-prep: Prepare the Dockerfile folder with all the extra files
-* docker-build: Build the Dockerfile locally
-* docker-push: Push the image to the selected repository. You must make login before to push the docker image.
-
----
-**Important**
-
-If you are developing with MacOS/Darwin, you must install gnu-sed.
-
+For detailed information on a specific command, use the following pattern:
+```bash
+catalog [command] --help
 ```
-brew install gnu-sed
+Replace `[command]` with the specific command you want to know more about. For example, to get help for the `pull` command:
+```bash
+catalog pull --help
 ```
----
+This command will provide specific usage instructions and additional flags for the `pull` command.
+
+Remember that the `catalog` command is a versatile tool for managing applications in the Napptive Catalog. Use the provided commands and flags to perform various operations on the cataloged applications.
+
+## Development Guide
+
+If you are interested in contributing to the `catalog-cli` project, please read the [CONTRIBUTING](CONTRIBUTING.md) and [DEVELOPMENT](DEVELOPMENT.md) guide.
 
 ## Integration with Github Actions
 
 This template is integrated with GitHub Actions. You need to add the secret `CodeClimateRerporterID` in the repository settings.
-
-![Check changes in the Main branch](https://github.com/napptive/go-template/workflows/Check%20changes%20in%20the%20Main%20branch/badge.svg)
 
 ## License
 
