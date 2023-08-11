@@ -3,7 +3,7 @@
 - [Getting Involved](#getting-involved)
 - [How can you contribute](#how-can-you-contribute)
 - [Code contributions](#code-contributions)
-- [Best practices](#to-make-a-good-contribution-keep-in-mind-the-following-points)
+- [Best practices](#best-practices)
 
 ## Getting Involved
 
