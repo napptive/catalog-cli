@@ -1,50 +1,48 @@
 # catalog-cli
 A CLI to interact with [Napptive](https://napptive.com/) Catalog.
 
-## Commands Documentation
+## Commands Help
 
-The `catalog-cli` is a powerful tool that provides a range of methods for interacting with the Napptive Catalog. This documentation outlines the various commands, their usage, and available flags.
+The `catalog` is a powerful cli tool that provides a range of commands for interacting with the Napptive Catalog.
 
-**Usage:**
 ```bash
-catalog [flags]
-catalog [command]
+$ catalog --help
+The catalog command provides a set of methods to interact with the Napptive Catalog
+
+Usage:
+  catalog [flags]
+  catalog [command]
+
+Examples:
+$ catalog
+
+Available Commands:
+  change-visibility Update application visibility
+  completion        Generate the autocompletion script for the specified shell
+  deploy            Deploy a catalog application in the playground
+  help              Help about any command
+  info              Get the principal information of an application.
+  list              List the applications
+  pull              Pull an application from catalog.
+  push              Push an application in the catalog.
+  remove            Remove an application from catalog.
+  summary           Get te catalog summary.
+
+Flags:
+      --authEnable                   JWT authentication enable (default true)
+      --catalogAddress string        Catalog-manager host (default "catalog.playground.napptive.dev")
+      --catalogPort int              Catalog-manager port (default 7060)
+      --consoleLogging               Pretty print logging
+      --debug                        Set debug level
+  -h, --help                         help for catalog
+      --output string                Output format in which the results will be returned: json or table (default "table")
+      --skipCertValidation           enables ignoring the validation step of the certificate presented by the server
+      --usePlaygroundConfiguration   Set to false to avoid reading the .playground.yaml file (default true)
+      --useTLS                       TLS connection is expected with the Catalog manager (default true)
+  -v, --version                      version for catalog
+
+Use "catalog [command] --help" for more information about a command.
 ```
-_Example_ To see a list of available applications in the catalog:
-```bash
-catalog list
- ```
-
-**Available Commands:**
-1. `help`: Provides help information about any specific command.
-1. `info`: Retrieves principal information about a specific application.
-1. `list`: Lists all the applications available in the catalog.
-1. `pull`: Pulls a specific application from the catalog.
-1. `push`: Pushes an application to the catalog.
-1. `remove`: Removes an application from the catalog.
-
-**Flags:**
-1. `--catalogAddress`: Specifies the host of the Catalog Manager. (Default: "catalog-manager")
-1. `--catalogPort`: Specifies the port of the Catalog Manager. (Default: 7060)
-1. `--consoleLogging`: Enables pretty-print logging.
-1. `--debug`: Sets the debug level.
-1. `-h`, `--help`: Shows help for the `catalog` command.
-1. `--output`: Specifies the output format for results: "json" or "table". (Default: "table")
-1. `-v`, `--version`: Displays the version information for the `catalog` command.
-
-**Command Usage:** 
-
-For detailed information on a specific command, use the following pattern:
-```bash
-catalog [command] --help
-```
-Replace `[command]` with the specific command you want to know more about. For example, to get help for the `pull` command:
-```bash
-catalog pull --help
-```
-This command will provide specific usage instructions and additional flags for the `pull` command.
-
-Remember that the `catalog` command is a versatile tool for managing applications in the Napptive Catalog. Use the provided commands and flags to perform various operations on the cataloged applications.
 
 ## Development Guide
 
