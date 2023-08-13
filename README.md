@@ -52,6 +52,7 @@ If you are interested in contributing to the `catalog-cli` project, please read 
 
 This template is integrated with GitHub Actions. You need to add the secret `CodeClimateRerporterID` in the repository settings.
 
+![Check changes in the Main branch](https://github.com/napptive/catalog-cli/workflows/Check%20changes%20in%20the%20Main%20branch/badge.svg)
 ## License
 
  Copyright 2020 Napptive
