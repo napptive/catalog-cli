@@ -240,7 +240,7 @@ func (c *Catalog) Info(application string) error {
 }
 
 // List returns the applications
-func (c *Catalog) List(targetNamespace string) error {
+func (c *Catalog) List(targetNamespace string, searchString string) error {
 	// Connection
 	// adds an empty applicationName to the targetNamespace to use GetConnectionToCatalog method
 	conn, err := connection.GetConnectionToCatalog(&c.cfg.ConnectionConfig, fmt.Sprintf("%s/", targetNamespace))
@@ -258,10 +258,25 @@ func (c *Catalog) List(targetNamespace string) error {
 	response, err := client.List(ctx, &grpc_catalog_go.ListApplicationsRequest{
 		Namespace: targetNamespace,
 	})
+
+	if searchString != "" {
+		filter(response, searchString)
+	}
+
 	if err != nil {
 		return c.ResultPrinter.PrintResultOrError(nil, nerrors.FromGRPC(err))
 	}
 	return c.ResultPrinter.PrintResultOrError(response, nil)
+}
+
+func filter(response *grpc_catalog_go.ApplicationList, searchString string) {
+	var filtered []*grpc_catalog_go.ApplicationSummary
+	for _, app := range response.Applications {
+		if strings.Contains(app.ApplicationName, searchString) {
+			filtered = append(filtered, app)
+		}
+	}
+	response.Applications = filtered
 }
 
 func (c *Catalog) Summary() error {

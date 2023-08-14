@@ -105,7 +105,29 @@ var listCmd = &cobra.Command{
 		if len(args) == 1 {
 			targetNamespace = args[0]
 		}
-		crashOnError(catalog.List(targetNamespace))
+		crashOnError(catalog.List(targetNamespace, ""))
+	},
+}
+
+var catalogSearchCmdLongHelp = `Search for applications by name stored in the catalog`
+
+var catalogSearchCmdShortHelp = `Search for applications`
+
+var targetNamespace = ""
+
+var searchCmd = &cobra.Command{
+	Use:   "search [application Name]",
+	Long:  catalogSearchCmdLongHelp,
+	Short: catalogSearchCmdShortHelp,
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		catalog, err := operations.NewCatalog(&cfg)
+		crashOnError(err)
+		searchString := ""
+		if len(args) == 1 {
+			searchString = args[0]
+		}
+		crashOnError(catalog.List(targetNamespace, searchString))
 	},
 }
 
@@ -162,6 +184,8 @@ func init() {
 
 	pushCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application is private")
 
+	searchCmd.Flags().StringVarP(&targetNamespace, "namespace", "n", "", "Namespace to search for applications")
+
 	catalogChangeVisibilityCmd.Flags().BoolVar(&privateApp, "private", false, "Flag to indicate if an application becomes private")
 	catalogChangeVisibilityCmd.Flags().BoolVar(&publicApp, "public", true, "Flag to indicate if an application becomes public")
 
@@ -172,4 +196,5 @@ func init() {
 	rootCmd.AddCommand(summaryCmd)
 	rootCmd.AddCommand(catalogChangeVisibilityCmd)
 	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(searchCmd)
 }
