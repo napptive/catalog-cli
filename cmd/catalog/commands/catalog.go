@@ -123,10 +123,7 @@ var searchCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		catalog, err := operations.NewCatalog(&cfg)
 		crashOnError(err)
-		searchString := ""
-		if len(args) == 1 {
-			searchString = args[0]
-		}
+		searchString := args[0]
 		crashOnError(catalog.List(targetNamespace, searchString))
 	},
 }
