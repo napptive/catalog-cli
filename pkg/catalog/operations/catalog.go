@@ -260,7 +260,7 @@ func (c *Catalog) List(targetNamespace string, searchString string) error {
 	})
 
 	if searchString != "" {
-		filter(response, searchString)
+		filterByName(response, searchString)
 	}
 
 	if err != nil {
@@ -269,7 +269,7 @@ func (c *Catalog) List(targetNamespace string, searchString string) error {
 	return c.ResultPrinter.PrintResultOrError(response, nil)
 }
 
-func filter(response *grpc_catalog_go.ApplicationList, searchString string) {
+func filterByName(response *grpc_catalog_go.ApplicationList, searchString string) {
 	var filtered []*grpc_catalog_go.ApplicationSummary
 	for _, app := range response.Applications {
 		if strings.Contains(app.ApplicationName, searchString) {
