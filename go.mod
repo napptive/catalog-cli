@@ -11,7 +11,7 @@ require (
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
-	google.golang.org/grpc v1.56.0
+	google.golang.org/grpc v1.56.3
 )
 
 require (
